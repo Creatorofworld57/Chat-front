@@ -45,7 +45,7 @@ const UserForm = () => {
     const checking = async (name) => {
         try {
             console.log(name)
-            const Url = `${backendUrl}/api/checking`;
+            const Url = `130.193.62.14:8080/api/checking`;
             console.log('Backend URL:', process.env.REACT_APP_BACKEND_URL);
             const response = await fetch(Url, {
                 method: 'POST',
