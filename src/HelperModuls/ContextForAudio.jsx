@@ -5,7 +5,7 @@ import '../Styles/Menu.css';
 export const MyContext = React.createContext();
 
 const ContextForAudio = (props) => {
-    const [data, setData] = useState(null);
+    const [data, setData] = useState(1);
 
     const info = {
         data,

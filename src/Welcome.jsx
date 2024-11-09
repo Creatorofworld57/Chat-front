@@ -2,7 +2,6 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Styles/Welcome.css';
 
-import SlidingMenu from "./HelperModuls/SlidingMenu";
 
 
 const Welcome = () => {
@@ -80,13 +79,6 @@ const Welcome = () => {
 
     return (
         <div>
-            <button
-                className={isButtonVisible ? "top" : "top active"}
-
-                onClick={redirectToLogin}
-            >
-                Sign in or sign up
-            </button>
             <div className="form-container">
                 <h1>
                     Enter name of track
@@ -103,7 +95,7 @@ const Welcome = () => {
             </div>
 
             {/* Вставляем SlidingMenu и передаем туда список треков */}
-            <SlidingMenu tracks={tracks} val ={inputValue}/>
+
 
             <button className="top-left-button5" onClick={redirectToProfile}>
                 Профиль

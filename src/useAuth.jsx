@@ -3,23 +3,16 @@ import { useState, useEffect } from 'react';
 const useAuth = () => {
     const [auth, setAuth] = useState(false);
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
-    useEffect(() => {
-        const fetchAuth = async () => {
-            try {
-                const response = await fetch(`${backendUrl}/api/authorization`, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
+    useEffect(key => {
+        const fetchAuth =  () => {
 
-                if (response.status===200) {
+                if (localStorage.getItem('jwtToken')!==null) {
                     setAuth(true);
                 } else {
                     setAuth(false);
                 }
-            } catch (error) {
-                setAuth(false);
             }
-        };
+
 
         fetchAuth();
     }, []);
