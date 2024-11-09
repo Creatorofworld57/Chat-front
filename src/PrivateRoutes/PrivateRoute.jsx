@@ -4,7 +4,7 @@ import { Navigate, Outlet } from "react-router-dom";
 const PrivateRoute = () => {
     const [authorize, setAuthorize] = useState(null); // Initializing with null for loading state
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
-
+    const token = localStorage.getItem('jwtToken');
     const auth = async () => {
         try {
             const response = await fetch(`${backendUrl}/api/authorization`, {
@@ -12,7 +12,7 @@ const PrivateRoute = () => {
                 credentials: 'include'
             });
             console.log('Authorization response status:', response.status);
-            if (response.status === 200) {
+            if (token!=null) {
                 setAuthorize(true);
             } else {
                 setAuthorize(false);

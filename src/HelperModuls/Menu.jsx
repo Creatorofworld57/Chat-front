@@ -1,46 +1,48 @@
-import React, {useContext, useEffect, useState} from 'react'
-import '../Styles/Menu.css'
-import {useNavigate} from "react-router-dom";
-import {ThemeContext} from "./ThemeContex";
+import React, { useContext, useEffect, useState } from 'react';
+import '../Styles/Menu.css';
+import { useNavigate } from "react-router-dom";
+import { Theme } from "./ThemeContext";
+import CreateNewChat from "../NewChat/CreateNewChat";
 
-const Menu = ({active,setActive}) => {
+const Menu = ({ active, setActive }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isRotated, setIsRotated] = useState(false);
     const [user, setUser] = useState(null);
     const [userImage, setUserImage] = useState('');
     const [isChecked, setIsChecked] = useState(false);
-    const navigate=useNavigate()
+    const [isNewChat, setIsNewChat] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [selectedUsers, setSelectedUsers] = useState([]);
+    const navigate = useNavigate();
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const token = localStorage.getItem('jwtToken');
+    const { color, setColorTheme } = useContext(Theme);
 
     const toggleToolbar = () => {
         setIsOpen(!isOpen);
         setIsRotated(!isRotated);
     };
-    const redirectTo=(url)=>{
 
-        navigate(url);
-    }
+    const redirectTo = (url) => navigate(url);
+
     const redirectToLogout = () => {
-        window.location.replace(`${backendUrl}/logout`);
+        token.setItem('jwtToken',null)
+        window.location.href('/');
     };
 
-
-    useEffect(() => {
-        const initialBackgroundColor = getComputedStyle(document.body).backgroundColor;
-        setIsChecked(initialBackgroundColor === 'rgb(46, 46, 46)'); // Проверка на темный цвет
-        getUser();
-        userInfo();
-    }, []);
-    const userInfo = async () => {
+    const getUserInfo = async () => {
         try {
             const response = await fetch(`${backendUrl}/api/userInfo`, {
                 method: 'GET',
-                credentials: 'include'
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
             });
-            const user = await response.text();
-            setUserImage(user);
+            const userImg = await response.text();
+            setUserImage(userImg);
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error fetching user image:', error);
         }
     };
 
@@ -48,74 +50,94 @@ const Menu = ({active,setActive}) => {
         try {
             const response = await fetch(`${backendUrl}/api/infoAboutUser`, {
                 method: 'GET',
-                credentials: 'include'
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
             });
-
-            const userok = await response.json();
-            setUser(userok);
-
+            const userData = await response.json();
+            setUser(userData);
         } catch (error) {
-            console.error('Error fetching user info', error);
+            console.error('Error fetching user info:', error);
         }
-
-
     };
 
-    const redirectToDelete = async () => {
+    const deleteUserAccount = async () => {
         try {
-            if (window.confirm('Вы уверены, что хотите удалить свою учетную запись?')) {
+            if (window.confirm('Are you sure you want to delete your account?')) {
                 const response = await fetch(`${backendUrl}/api/user`, {
                     method: 'DELETE',
-                    credentials: 'include'
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
                 });
-                if (response.ok)
-                    window.location.replace(`${backendUrl}/logout`);
+                if (response.ok) window.location.replace(`${backendUrl}/logout`);
             }
         } catch (error) {
-            console.error('Error deleting', error);
-            alert('Error deleting.');
+            console.error('Error deleting account:', error);
+            alert('Error deleting account.');
         }
     };
-    const handleChange = (event) => {
+
+    const handleThemeChange = (event) => {
         const checked = event.target.checked;
         setIsChecked(checked);
+        setColorTheme(!color);
+        document.body.style.backgroundColor = color ? "lightgrey" : "black";
+        document.body.style.color = color ? "black" : "white";
     };
+
+
+
+
+
+
+
+    useEffect(() => {
+        getUserInfo();
+        getUser();
+    }, []);
+
     return (
-        <div className={active?'menu active':'menu'}>
-            <div className={active?'blur active':'blur'}/>
-            <div className="menu-content">
-                <ul>
-                    {user && (
-                        <>
-                            <li><img id="myImage" src={`${backendUrl}/api/images/${userImage}`} alt="Profile"/>
-                            </li>
-                            <li>Name: {user.name}</li>
-                            <li>Created: {new Date(user.created).toLocaleDateString()}</li>
-                            <li>Updated: {new Date(user.updated).toLocaleDateString()}</li>
-                            <li>Role: {user.roles}</li>
-                        </>
-                    )}
-                    <li className="delete"><a onClick={redirectToDelete}>Удалить учетную запись</a></li>
-                    <li><a onClick={() => redirectTo('/update')}>Обновить мои данные</a></li>
-                    <li className='exit'><a className="exit" onClick={redirectToLogout}>Выйти</a></li>
-                    <li>
-                        <div className="toggle-switch">
-                            <input
-                                type="checkbox"
-                                id="toggle"
-                                className="toggle-input"
-                                checked={isChecked}
-                                onChange={handleChange}
-                            />
-                            <label htmlFor="toggle" className="toggle-label"></label>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+        <div className={active ? 'menu active' : 'menu'}>
+            <div className={active ? 'blur active' : 'blur'} />
+            {!isNewChat ? (
+                <div className="menu-content">
+                    <ul>
+                        {user && (
+                            <>
+                                <li>
+                                    <img id="myImage" src={`${backendUrl}/api/images/${userImage}`} alt="Profile" />
+                                </li>
+                                <li>Имя: {user.name}</li>
+                                <li>Created: {new Date(user.createdAt).toLocaleDateString()}</li>
+                                <li>Updated: {new Date(user.updatedAt).toLocaleDateString()}</li>
+                            </>
+                        )}
+                        <li><a onClick={() => setIsNewChat(true)}>Создать новый чат</a></li>
+                        <li className="exit"><a onClick={deleteUserAccount}>Удалить аккаунт</a></li>
+                        <li><a onClick={() => redirectTo('/update')}>Обновить данные</a></li>
+                        <li className='exit'><a className="exit" onClick={redirectToLogout}>Выйти</a></li>
+                        <li>
+                            <div className="toggle-switch">
+                                <input
+                                    type="checkbox"
+                                    id="toggle"
+                                    className="toggle-input"
+                                    checked={isChecked}
+                                    onChange={handleThemeChange}
+                                />
+                                <label htmlFor="toggle" className="toggle-label"></label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            ) : (
+              <CreateNewChat/>
+            )}
+        </div>
+    );
+};
 
-
-        </div>)
-
-
-}
 export default Menu;
