@@ -1,12 +1,12 @@
-import React, {createContext, useContext, useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Styles/Welcome.css';
+import './Welcome.css';
 
 
 
 const Welcome = () => {
     const navigate = useNavigate();
-    const [isButtonVisible, setButtonVisible] = useState(true);
+
     const [inputValue, setInputValue] = useState('');  // Значение из поля ввода
     const [tracks, setTracks] = useState([]);  // Список треков
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -39,34 +39,15 @@ const Welcome = () => {
         }
     }, [inputValue]);
 
-    useEffect(() => {
-        loginButton();
-    }, []);
 
-    const loginButton = async () => {
-        try {
-            const response = await fetch(`${backendUrl}/api/authorization`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            if (response.status === 200) {
-                setButtonVisible(false);
-            } else {
-                setButtonVisible(true);
-            }
-            console.log(isButtonVisible)
-        } catch (error) {
-            console.error('Failed to fetch authorization:', error);
-        }
-    };
+
+
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
     };
 
-    const redirectToLogin = () => {
-        navigate('/login');
-    };
+
 
 
     const redirectToProfile = () => {

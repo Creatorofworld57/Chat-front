@@ -1,23 +1,23 @@
 import React, { useContext, useEffect, useState } from 'react';
-import '../Styles/Menu.css';
+import './Menu.css';
 import { useNavigate } from "react-router-dom";
-import { Theme } from "./ThemeContext";
-import CreateNewChat from "../NewChat/CreateNewChat";
+import { Theme } from "../../../HelperModuls/ThemeContext";
+import CreateNewChat from "../../../NewChat/CreateNewChat";
 
-const Menu = ({ active, setActive }) => {
+const Menu = ({ active }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isRotated, setIsRotated] = useState(false);
     const [user, setUser] = useState(null);
     const [userImage, setUserImage] = useState('');
     const [isChecked, setIsChecked] = useState(false);
     const [isNewChat, setIsNewChat] = useState(false);
-    const [users, setUsers] = useState([]);
-    const [selectedUsers, setSelectedUsers] = useState([]);
-    const navigate = useNavigate();
+
+
+
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const token = localStorage.getItem('jwtToken');
     const { color, setColorTheme } = useContext(Theme);
-
+    const navigate = useNavigate();
     const toggleToolbar = () => {
         setIsOpen(!isOpen);
         setIsRotated(!isRotated);
@@ -26,8 +26,8 @@ const Menu = ({ active, setActive }) => {
     const redirectTo = (url) => navigate(url);
 
     const redirectToLogout = () => {
-        token.setItem('jwtToken',null)
-        window.location.href('/');
+        localStorage.removeItem('jwtToken');
+        navigate('/');
     };
 
     const getUserInfo = async () => {

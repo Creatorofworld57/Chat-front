@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../Styles/Menu.css';
+import '../MainComponents/Profile/Menu/Menu.css';
 
 export const Theme = React.createContext({
     color: false,

@@ -1,9 +1,9 @@
 import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
 import {useContext, useEffect, useRef, useState} from 'react';
-import styles from './Styles/Update.module.css';
+import styles from './Update.module.css';
 import { jwtDecode } from "jwt-decode";
-import {Theme} from "./HelperModuls/ThemeContext";
+import {Theme} from "../../../HelperModuls/ThemeContext";
 
 
 
@@ -16,7 +16,7 @@ const Messenger = () => {
     const messagesEndRef = useRef(null);
     const [decoded,setDecoded] = useState('')
     const token = localStorage.getItem('jwtToken');
-    const {setUpdateValue,setIdUpdatedValue,chatId,setChatIdValue,} = useContext(Theme);
+    const {setUpdateValue,setIdUpdatedValue,chatId} = useContext(Theme);
         const fetchData = async () => {
             try {
                 const response = await fetch(`https://localhost:8080/api/getid`, {

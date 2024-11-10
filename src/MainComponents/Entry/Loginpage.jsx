@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Styles/Loginpage.css';
+import './Loginpage.css';
 import { FaGithub } from 'react-icons/fa';
 
 const LoginPage = () => {
