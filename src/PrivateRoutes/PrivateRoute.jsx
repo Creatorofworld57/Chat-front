@@ -12,7 +12,7 @@ const PrivateRoute = () => {
                 credentials: 'include'
             });
             console.log('Authorization response status:', response.status);
-            if (token!=null) {
+            if (token!=null || token !== undefined) {
                 setAuthorize(true);
             } else {
                 setAuthorize(false);

@@ -1,10 +1,10 @@
 import React from 'react';
 import {BrowserRouter as Router, Routes, Route, useLocation} from 'react-router-dom';
-import Welcome from './Welcome';
-import Loginpage from './Loginpage';
-import NotFoundPage from './NotFoundPage';
-import Profile from './Profile';
-import UserForm from './RegisterPage';
+import Welcome from './MainComponents/MainPage/Welcome';
+import Loginpage from './MainComponents/Entry/Loginpage';
+import NotFoundPage from './MainComponents/NotFound/NotFoundPage';
+import Profile from './MainComponents/Profile/Profile';
+import UserForm from './MainComponents/Registration/RegisterPage';
 
 
 
@@ -13,9 +13,9 @@ import AudioPlaylist from './AudioPlaylist';
 import { AudioUpload } from './AudioUpload';
 import PrivateRoute from './PrivateRoutes/PrivateRoute';
 import ContextForAudio from './HelperModuls/ContextForAudio';
-import Playlist from './Chats';
-import Home from "./Home";
-import Messenger from "./Messenger";
+import Playlist from './MainComponents/Profile/Chats/Chats';
+import Home from "./MainComponents/Home/Home";
+import Messenger from "./MainComponents/Profile/Messenger/Messenger";
 import ThemeContext from "./HelperModuls/ThemeContext";
 
 const App = () => {
@@ -29,10 +29,10 @@ const App = () => {
                         <Route path="*" element={<NotFoundPage />} />
                         <Route path="/" element={<Home />} />
                         <Route path="/reg" element={<UserForm />} />
-                        <Route path="/update" element={<Messenger />} />
-                        <Route path="/profile" element={<Profile />} />
-                        <Route path="/home" element={<Welcome />} />
                         <Route element={<PrivateRoute />}>
+                            <Route path="/update" element={<Messenger />} />
+                            <Route path="/profile" element={<Profile />} />
+                            <Route path="/home" element={<Welcome />} />
                             <Route path="/profile/playlist" element={<Playlist />} />
                             <Route path="/audio_upload" element={<AudioUpload />} />
                             <Route path="/audio_playlist" element={<AudioPlaylist />} />

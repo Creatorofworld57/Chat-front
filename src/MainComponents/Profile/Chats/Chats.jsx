@@ -1,9 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
-
-import {MyContext} from "./HelperModuls/ContextForAudio";
-
-import './Styles/Chats.css'
-import {Theme} from "./HelperModuls/ThemeContext";
+import './Chats.css'
+import {Theme} from "../../../HelperModuls/ThemeContext";
+import ImageMerger from "./Images/ImageMerger";
 
 
 const Chats = () => {
@@ -93,12 +91,11 @@ const Chats = () => {
                         ))
                     ) : chats && chats.length > 0 ? (
                         chats.slice().reverse().map((chat, index) => (
-                            <li key={index} className={activeChat === chat.id ? "item active" : "item"}>
-                                <img className="track-image-newChat" onClick={() => handleClick(chat.id)}
-                                     src={`${backendUrl}/apiChats/chatImages/${chat.id}`} alt="Track"/>
+                            <li key={index} className={activeChat === chat.id ? "item active" : "item"} onClick={() => handleClick(chat.id)}>
+                                <ImageMerger chatIds={chat.participants}/>
                                 <div className="playlist-container">
                                     <div className={color ? "name-playlist" : "name-playlist light"}
-                                         onClick={() => handleClick(chat.id)}>{chat.name}</div>
+                                      >{chat.name}</div>
                                     <div
                                         className={color ? "author-playlist" : "author-playlist light"}>{chat.lastMessage !== null && chat.lastMessage.length > 20 ? chat.lastMessage.substring(0, 20) + '...' : chat.lastMessage}</div>
                                 </div>
@@ -106,7 +103,7 @@ const Chats = () => {
                             </li>
                         ))
                     ) : (
-                        <li>Треки не найдены</li>
+                        <li>Чаты не найдены</li>
                     )}
                 </ul>
             </div>

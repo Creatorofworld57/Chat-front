@@ -1,51 +1,56 @@
-import React, { useState } from 'react';
-import './Styles/Registr.css';
-import { useNavigate } from 'react-router-dom';
+import React, {useState} from 'react';
+import './Registr.css';
+import {useNavigate} from 'react-router-dom';
 
 
 const UserForm = () => {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
-    const [roles, setRoles] = useState('');
+
     const [file, setFile] = useState(null);
     const [check, setCheck] = useState(true);
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const navigate = useNavigate();
-
+    const redirectTo = (url) => {
+        navigate(url);
+    };
     const handleSubmit = async (event) => {
         event.preventDefault(); // предотвращаем стандартное поведение отправки формы
 
         const formData = new FormData();
         formData.append('name', name);
         formData.append('password', password);
-        formData.append('roles', roles);
         formData.append('file', file);
         const dataForLogin = {
             name: name,
             password: password
         };
-        const resp = async()=> {
-            await fetch(`${backendUrl}/api/user`, {
+
+           const response =  await fetch(`${backendUrl}/signup`, {
                 method: 'POST',
                 body: formData,
-                credentials: 'include'
             });
 
+
+        if (response.ok) {
+            const data = await response.json();
+            const token = data.token;  // Предположим, что сервер возвращает объект с полем token
+            localStorage.setItem('jwtToken', token);  // Сохраняем токен в localStorage
+            // Handle successful login, e.g., save token, redirect
+            console.log('Login successful', localStorage.getItem('jwtToken'));
+            redirectTo('/home'); // Redirect after successful login
+        } else {
+            // Handle errors, e.g., wrong credentials
+           console.log("bad registr")
         }
-        try {
-           await resp()
-            navigate('/')
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Ошибка при отправке данных');
-        }
+
 
     };
 
     const checking = async (name) => {
         try {
             console.log(name)
-            const Url = `http://localhost:8080/api/checking`;
+            const Url = `https://localhost:8080/api/checking`;
             console.log('Backend URL:', process.env.REACT_APP_BACKEND_URL);
             const response = await fetch(Url, {
                 method: 'POST',
@@ -94,15 +99,6 @@ const UserForm = () => {
                     placeholder="Enter your Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <input
-                    type="text"
-                    id="roles"
-                    name="roles"
-                    placeholder="Enter your Role"
-                    value={roles}
-                    onChange={(e) => setRoles(e.target.value)}
                     required
                 />
                 <div className="file-input-container">
