@@ -51,45 +51,47 @@ const Messenger = () => {
     }
 
     useEffect(() => {
-        const stompClient = new Client({
-            webSocketFactory: () => new SockJS('https://localhost:8080/ws'),
-            reconnectDelay: 5000,
-            heartbeatIncoming: 4000,
-            heartbeatOutgoing: 4000,
-            onConnect: () => {
-                console.log('Connected to WebSocket');
-                stompClient.subscribe('/message/first', (message) => {
-                    const parsedMessage = JSON.parse(message.body);
-                    setUpdateValue(true)
-                    setIdUpdatedValue(parsedMessage.chat.id)
-                    console.log(parsedMessage.chat.id)
-                    setMessages((prevMessages) => [...prevMessages, parsedMessage]);
-                });
-                setIsConnected(true); // Устанавливаем флаг подключения
-            },
-            onStompError: (frame) => {
-                console.error('STOMP Error:', frame.headers['message']);
-            },
-            onWebSocketError: (error) => {
-                console.error('WebSocket Error:', error);
-            },
-        });
+        if(chatId) {
+            const stompClient = new Client({
+                webSocketFactory: () => new SockJS('https://localhost:8080/ws'),
+                reconnectDelay: 5000,
+                heartbeatIncoming: 4000,
+                heartbeatOutgoing: 4000,
+                onConnect: () => {
+                    console.log('Connected to WebSocket');
+                    stompClient.subscribe(`/message/chatGet/${chatId}`, (message) => {
+                        const parsedMessage = JSON.parse(message.body);
+                        setUpdateValue(true)
+                        setIdUpdatedValue(parsedMessage.chat.id)
+                        console.log(parsedMessage.chat.id)
+                        setMessages((prevMessages) => [...prevMessages, parsedMessage]);
+                    });
+                    setIsConnected(true); // Устанавливаем флаг подключения
+                },
+                onStompError: (frame) => {
+                    console.error('STOMP Error:', frame.headers['message']);
+                },
+                onWebSocketError: (error) => {
+                    console.error('WebSocket Error:', error);
+                },
+            });
 
-        stompClient.activate();
-        setClient(stompClient);
+            stompClient.activate();
+            setClient(stompClient);
 
-        return () => {
-            if (stompClient && stompClient.active) {
-                if (stompClient && stompClient.active && typeof stompClient.deactivate === 'function') {
+            return () => {
+                if (stompClient && stompClient.active) {
+                    if (stompClient && stompClient.active && typeof stompClient.deactivate === 'function') {
 
-                    console.log('Disconnected from WebSocket');
+                        console.log('Disconnected from WebSocket');
 
-                    stompClient.deactivate();
-                    console.log('Disconnected from WebSocket');
+                        stompClient.deactivate();
+                        console.log('Disconnected from WebSocket');
+                    }
                 }
-            }
-        };
-    }, []);
+            };
+        }
+    }, [chatId]);
     useEffect(() => {
         fetchData();
         fetchMessages();

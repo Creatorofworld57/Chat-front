@@ -15,8 +15,10 @@ import PrivateRoute from './PrivateRoutes/PrivateRoute';
 import ContextForAudio from './HelperModuls/ContextForAudio';
 import Playlist from './MainComponents/Profile/Chats/Chats';
 import Home from "./MainComponents/Home/Home";
-import Messenger from "./MainComponents/Profile/Messenger/Messenger";
+
 import ThemeContext from "./HelperModuls/ThemeContext";
+import ContextForMenu from "./NewChat/ContextForMenu/ContextForMenu";
+import Update from "./Update/Update";
 
 const App = () => {
 
@@ -30,8 +32,10 @@ const App = () => {
                         <Route path="/" element={<Home />} />
                         <Route path="/reg" element={<UserForm />} />
                         <Route element={<PrivateRoute />}>
-                            <Route path="/update" element={<Messenger />} />
-                            <Route path="/profile" element={<Profile />} />
+                            <Route path="/update" element={<Update/>} />
+
+                            <Route path="/profile" element={<ContextForMenu><Profile />   </ContextForMenu>} />
+
                             <Route path="/home" element={<Welcome />} />
                             <Route path="/profile/playlist" element={<Playlist />} />
                             <Route path="/audio_upload" element={<AudioUpload />} />

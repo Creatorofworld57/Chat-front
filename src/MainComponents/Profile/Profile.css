@@ -237,3 +237,25 @@ p {
     width: 60%;
     height: 20%;
 }
+
+
+.blur {
+    width: 0;
+    height: 0;
+    position: fixed; /* Фиксированное позиционирование для покрытия всего экрана */
+    top: 0;
+    left: 0;
+    transition: all 1s;
+    z-index: 10; /* Должен перекрывать остальное содержимое */
+    backdrop-filter: none; /* Нет размытия по умолчанию */
+    background: transparent;
+}
+
+.blur.active {
+    width: 100%; /* Полная ширина экрана */
+    height: 100vh; /* Полная высота экрана */
+    backdrop-filter: blur(5px); /* Применяем эффект размытия */
+    /* Фоновое изображение */
+    background-size: cover; /* Покрывает весь экран */
+    transition: all 1s;
+}

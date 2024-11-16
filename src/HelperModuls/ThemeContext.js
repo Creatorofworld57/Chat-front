@@ -4,7 +4,7 @@ import '../MainComponents/Profile/Menu/Menu.css';
 export const Theme = React.createContext({
     color: false,
     updated: false,
-    chatId: 1,
+    chatId: 0,
     id: 0,// Установить значение по умолчанию, соответствующее типу string
     setColorTheme: (color) => {},  // Указываем, что функция принимает аргумент
     setUpdateValue: (updated) => {},    // Указываем, что функция принимает аргумент
@@ -16,7 +16,7 @@ const ThemeContext = (props) => {
     // Состояния для разных переменных
     const [color, setColor] = useState(true); // Цвет темы
     const [updated, setUpdated] = useState(false); // ID
-    const [chatId, setChatId] = useState(1); // Задать начальное значение как строку
+    const [chatId, setChatId] = useState(0); // Задать начальное значение как строку
     const [idUpdated, setIdUpdated] = useState(0); // Задать начальное значение как строку
 
     // Функции для обновления состояний

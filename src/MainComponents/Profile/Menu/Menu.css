@@ -13,10 +13,17 @@
     background-color: black;
    /* Добавьте это свойство для закругленных краев */
 }
+.menu.light{
+    background-color: lightgray;
+    color:black
+}
 .menu.active {
     transform: translateX(0);
 }
-
+.menu.active.light{
+    background-color: lightgray;
+    color:black
+}
 /* Контент меню */
 .menu_content {
     width: 100px;
@@ -31,23 +38,24 @@
 }
 
 /* Размытие фона */
-.blur.active {
-    width: 1900px;
+/*.blur.active {
+    width: 4000px;
     height: 100vh;
     backdrop-filter: blur(2px);
     position: absolute;
-    right:245px;
+    right:220px;
     transition:all 1s;
 
 }
 .blur{
+
     width: 0;
     height: 0;
     position: absolute;
     right:100px;
     transition: all 1s;
 }
-
+*/
 
 ul {
     margin-left: 15px;
@@ -56,7 +64,31 @@ ul {
     padding: 0;
 }
 
-li {
+.liMenu {
+    color: white;
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    margin-right: 10px;
+    transition: color 0.3s ease, transform 0.3s ease; /* Плавный переход для эффектов */
+}
+.liMenu.light{
+    color: black;
+}
+.liMenuNotPoint{
+    color: white;
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    margin-right: 10px;
+    transition: color 0.3s ease, transform 0.3s ease; /* Плавный переход для эффектов */
+}
+.liMenuNotPoint.light{
+    color: black;
+}
+li{
     color: white;
     display: flex;
     align-items: center;
@@ -65,12 +97,8 @@ li {
     transition: color 0.3s ease, transform 0.3s ease; /* Плавный переход для эффектов */
 }
 
-li:hover {
 
-    transform: scale(1.1); /* Увеличение при наведении */
-}
-
-li::before {
+.liMenu::before {
     content: "•"; /* Добавляем маркер перед каждым элементом */
     color: white;
     margin-right: 20px;
