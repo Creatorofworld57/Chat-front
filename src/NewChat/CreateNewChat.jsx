@@ -1,26 +1,26 @@
-import React, {useContext, useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {Theme} from "../HelperModuls/ThemeContext";
-import "./CreateNewChat.css"
+import React, { useContext, useEffect, useState, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { Theme } from "../HelperModuls/ThemeContext";
+import "./CreateNewChat.css";
+import { ThemeMenu } from "./ContextForMenu/ContextForMenu";
 
-
-const CreateNewChat = (isNewChat1,setIsNewChat)=>{
-
-
-
+const CreateNewChat = () => {
     const [users, setUsers] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const navigate = useNavigate();
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
-    const token = localStorage.getItem('jwtToken');
-    const { color, setColorTheme } = useContext(Theme);
-    const getUsersList = async () => {
+    const token = localStorage.getItem("jwtToken");
+    const { color } = useContext(Theme);
+    const { setIsCreateChat } = useContext(ThemeMenu);
+
+    // Загружаем список пользователей один раз
+    const getUsersList = useCallback(async () => {
         try {
             const response = await fetch(`${backendUrl}/api/getUsers`, {
-                method: 'GET',
+                method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
             });
             if (response.ok) {
@@ -28,63 +28,82 @@ const CreateNewChat = (isNewChat1,setIsNewChat)=>{
                 setUsers(userList);
             }
         } catch (error) {
-            console.error('Error fetching users list:', error);
-            alert('Error fetching users.');
+            console.error("Error fetching users list:", error);
         }
-    };
-    const handleUserSelection = (id) => {
-        setSelectedUsers((prevSelected) => [...prevSelected, id]);
-    };
-    const createChat = async ()=>{
+    }, [backendUrl, token]);
+
+    // Обрабатываем выбор пользователей
+    const handleUserSelection = useCallback(
+        (id) => {
+            setSelectedUsers((prevSelected) =>
+                prevSelected.includes(id)
+                    ? prevSelected.filter((item) => item !== id)
+                    : [...prevSelected, id]
+            );
+        },
+        []
+    );
+
+    // Создание чата
+    const createChat = useCallback(async () => {
         try {
             const response = await fetch(`${backendUrl}/apiChats/createChat`, {
-                method: 'POST',
-                body:JSON.stringify(selectedUsers),
+                method: "POST",
+                body: JSON.stringify(selectedUsers),
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
             });
             if (response.ok) {
-
+                setIsCreateChat(false);
             }
         } catch (error) {
-            console.error('Error fetching users list:', error);
-            alert('Error fetching users.');
+            console.error("Error creating chat:", error);
         }
-    }
+    }, [backendUrl, selectedUsers, setIsCreateChat, token]);
 
+    // Загружаем список пользователей при монтировании
     useEffect(() => {
-            getUsersList();
+        getUsersList();
+    }, [getUsersList]);
 
-    }, []);
+    // Мемоизируем отфильтрованный список пользователей
+    const renderedUsers = useMemo(
+        () =>
+            users.slice().reverse().map((user, index) => (
+                <li key={index} className="item">
+                    <img
+                        className={
+                            selectedUsers.includes(user.id)
+                                ? "track-image-newChat-aprove"
+                                : "track-image-newChat"
+                        }
+                        onClick={() => handleUserSelection(user.id)}
+                        src={`${backendUrl}/api/images/${user.id}`}
+                        alt="Track"
+                        loading="lazy" // Ленивое выполнение загрузки изображений
+                    />
+                    <div className="newChat-container">
+                        <div className={color ? "name-newChat" : "name-playlist light"}>
+                            {user.name}
+                        </div>
+                    </div>
+                </li>
+            )),
+        [users, selectedUsers, handleUserSelection, color, backendUrl]
+    );
 
     return (
         <div className={color ? "menu-items-newChat" : "menu-items light"}>
             <ul>
-                {users && users.length > 0 ? (
-                    users.slice().reverse().map((user, index) => (
-                        <li key={index} className="item">
-                            <img
-                                className="track-image-newChat"
-                                onClick={() => handleUserSelection(user.id)}
-                                src={`${backendUrl}/api/images/${user.id}`}
-                                alt="Track"
-                            />
-                            <div className="newChat-container">
-                                <div className={color ? "name-newChat" : "name-playlist light"}>{user.name}</div>
-                            </div>
-                        </li>
-                    ))
-
-
-                ) : (
-                    <li>No users available</li>
-                )}
-                <li onClick={()=>createChat()}>Создать чат</li>
+                {users && users.length > 0 ? renderedUsers : <li>No users available</li>}
+                <li className="Create" onClick={createChat}>
+                    Создать чат
+                </li>
             </ul>
         </div>
+    );
+};
 
-    )
-}
-export default CreateNewChat
+export default CreateNewChat;

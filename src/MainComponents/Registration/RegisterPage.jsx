@@ -93,6 +93,7 @@ const UserForm = () => {
                 />
                 <a className={check ? 'Nevalid' : 'Valid'}>This name is already taken</a>
                 <input
+                    className={"input_password"}
                     type="password"
                     id="password"
                     name="password"

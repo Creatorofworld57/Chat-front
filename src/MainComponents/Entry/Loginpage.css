@@ -35,11 +35,7 @@ input{
         cursor: pointer;
         transition: background-color 0.3s, color 0.3s;
     }
-    button:hover {
-        background-color: #fff;
-        color: #000;
-        border: 2px solid #000;
-    }
+
     .top-left-button {
         position: absolute;
         top: 20px;

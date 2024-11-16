@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import './Chats.css'
 import {Theme} from "../../../HelperModuls/ThemeContext";
 import ImageMerger from "./Images/ImageMerger";
+import {ThemeMenu} from "../../../NewChat/ContextForMenu/ContextForMenu";
 
 
 const Chats = () => {
@@ -11,9 +12,9 @@ const Chats = () => {
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const token = localStorage.getItem('jwtToken');
     const {updated, setUpdateValue, color, idUpdated, setIdUpdatedValue, chatId, setChatIdValue} = useContext(Theme);
+    const {createNewChat,setIsCreateChat} =useContext(ThemeMenu)
 
-
-    const responseForTracks = async () => {
+    const responseForChats = async () => {
         setIsLoading(true)
         const response = await fetch(`${backendUrl}/apiChats/getChats`, {
             method: 'GET',
@@ -35,8 +36,9 @@ const Chats = () => {
         // Правильно вызываем setDat
     };
     useEffect(() => {
-        responseForTracks();
-    }, []);
+        if(createNewChat===false)
+             responseForChats();
+    }, [createNewChat]);
     const getLastMessage = async (id) => {
 
         const response = await fetch(`${backendUrl}/apiChats/getLastMessage/${chatId}`, {
@@ -81,7 +83,7 @@ const Chats = () => {
     return (
         <div>
             <div className={color ? "menu-items" : "menu-items light"}>
-                <ul>
+
                     {isLoading ? (
                         Array.from({length: 5}).map((_, index) => (
                             <li key={index} className="skeleton-track-item">
@@ -91,7 +93,7 @@ const Chats = () => {
                         ))
                     ) : chats && chats.length > 0 ? (
                         chats.slice().reverse().map((chat, index) => (
-                            <li key={index} className={activeChat === chat.id ? "item active" : "item"} onClick={() => handleClick(chat.id)}>
+                            <li  key={index} className={activeChat === chat.id ? "item active" : "item"} onClick={() => handleClick(chat.id)}>
                                 <ImageMerger chatIds={chat.participants}/>
                                 <div className="playlist-container">
                                     <div className={color ? "name-playlist" : "name-playlist light"}
@@ -105,7 +107,7 @@ const Chats = () => {
                     ) : (
                         <li>Чаты не найдены</li>
                     )}
-                </ul>
+
             </div>
         </div>
 

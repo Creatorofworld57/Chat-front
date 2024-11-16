@@ -33,9 +33,16 @@
 }
 .item{
     position: relative; /* Устанавливаем контейнер в относительное положение */
-    display: flex;
     align-items: center;
     z-index: 100;
+    border-bottom: 0.001cm solid white;
+
+    padding: 10px; /* Отступы внутри элемента */
+    margin: 0; /* Убираем внешние отступы */
+
+}
+.item:hover{
+    opacity: 0.7;
 }
 .menu-items{
     position: absolute;
@@ -48,7 +55,7 @@
     z-index: 10; /* Передний план для меню */
     left:1%;
     top:20%;
-    display:grid;
+
     padding-bottom: 120px;
 }
 .menu-items.light{
@@ -68,6 +75,8 @@
     flex-direction: column;
     position: relative;
     left:1%;
+    border-bottom: white;
+
 
 }
 
@@ -104,8 +113,138 @@
     transform: translateX(-50%);
     width: 100%; /* Можно задать ширину для компонента */
     max-width: 600px; /* Ограничение ширины */
-    padding: 10px; /* Добавьте отступы для внешнего вида */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Добавьте тень для визуальной выделенности */
+
+}
+/* Общие стили остаются */
+.menu-items {
+    position: absolute;
+    width: 100%;
+    min-height: 30%;
+    overflow: hidden;
+    background-color: black;
+    color: white;
+    margin-top: 10px;
+    z-index: 10;
+    left: 1%;
+    top: 20%;
+    display: grid;
+    padding-bottom: 120px;
+    max-width: 600px; /* Ограничиваем ширину */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-bottom: white;
+}
+
+.playlist-container {
+    display: grid;
+    flex-direction: column;
+    position: relative;
+    left: 1%;
+
+}
+
+.name-playlist {
+    font-size: 1rem;
+    color: #f5f5f5;
+    position: relative;
+    margin-bottom: 2px;
+    letter-spacing: 0.5px;
+    left: 2%;
+}
+
+
+/* --- Медиа-запросы для адаптивности --- */
+
+/* Планшеты и смартфоны (до 768px) */
+@media (max-width: 768px) {
+    .menu-items {
+        left: 5%;
+        top: 10%;
+        width: 90%; /* Занимает большую часть экрана */
+        padding-bottom: 100px;
+    }
+
+    .item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .name-playlist {
+        font-size: 0.9rem; /* Уменьшаем текст */
+    }
+
+    .author-playlist {
+        font-size: 0.8rem; /* Уменьшаем текст */
+    }
+}
+@media (max-width: 1300px) {
+    .menu-items {
+        left: 5%;
+        top: 10%;
+        width: 70%; /* Занимает большую часть экрана */
+        padding-bottom: 100px;
+    }
+
+    .item {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .name-playlist {
+        font-size: 0.9rem; /* Уменьшаем текст */
+    }
+
+    .author-playlist {
+        font-size: 0.8rem; /* Уменьшаем текст */
+    }
+}
+
+/* Смартфоны (до 480px) */
+@media (max-width: 480px) {
+    .menu-items {
+        left: 2%;
+        top: 5%;
+        width: 96%;
+        padding-bottom: 80px;
+    }
+
+    .item {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 8px;
+    }
+
+    .track-image-playlist {
+        width: 50px;
+        height: 50px; /* Уменьшаем размеры изображений */
+    }
+
+    .name-playlist {
+        font-size: 0.8rem; /* Ещё меньше текст */
+    }
+
+    .author-playlist {
+        font-size: 0.7rem; /* Ещё меньше текст */
+    }
+}
+
+/* Десктопы (широкие экраны, более 1200px) */
+@media (min-width: 1200px) {
+    .menu-items {
+        max-width: 800px; /* Увеличиваем максимальную ширину */
+    }
+
+    .name-playlist {
+        font-size: 1.2rem; /* Увеличиваем текст */
+    }
+
+    .author-playlist {
+        font-size: 1rem;
+    }
 }
 
 

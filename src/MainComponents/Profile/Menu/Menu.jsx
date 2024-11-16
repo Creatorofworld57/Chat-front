@@ -3,6 +3,7 @@ import './Menu.css';
 import { useNavigate } from "react-router-dom";
 import { Theme } from "../../../HelperModuls/ThemeContext";
 import CreateNewChat from "../../../NewChat/CreateNewChat";
+import {ThemeMenu} from "../../../NewChat/ContextForMenu/ContextForMenu";
 
 const Menu = ({ active }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -10,8 +11,8 @@ const Menu = ({ active }) => {
     const [user, setUser] = useState(null);
     const [userImage, setUserImage] = useState('');
     const [isChecked, setIsChecked] = useState(false);
-    const [isNewChat, setIsNewChat] = useState(false);
 
+    const {createNewChat ,setIsCreateChat} =useContext(ThemeMenu)
 
 
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -100,9 +101,9 @@ const Menu = ({ active }) => {
     }, []);
 
     return (
-        <div className={active ? 'menu active' : 'menu'}>
-            <div className={active ? 'blur active' : 'blur'} />
-            {!isNewChat ? (
+        <div className={active ? !color? "menu active light": "menu active" : !color ? "menu light":"menu"}>
+
+            {! createNewChat ? (
                 <div className="menu-content">
                     <ul>
                         {user && (
@@ -110,14 +111,14 @@ const Menu = ({ active }) => {
                                 <li>
                                     <img id="myImage" src={`${backendUrl}/api/images/${userImage}`} alt="Profile" />
                                 </li>
-                                <li>Имя: {user.name}</li>
-                                <li>Created: {new Date(user.createdAt).toLocaleDateString()}</li>
-                                <li>Updated: {new Date(user.updatedAt).toLocaleDateString()}</li>
+                                <li className={color ?"liMenu":"liMenu light"}>Имя: {user.name}</li>
+                                <li className={color ?"liMenu":"liMenu light"}>Created: {new Date(user.createdAt).toLocaleDateString()}</li>
+                                <li className={color ?"liMenu":"liMenu light"}>Updated: {new Date(user.updatedAt).toLocaleDateString()}</li>
                             </>
                         )}
-                        <li><a onClick={() => setIsNewChat(true)}>Создать новый чат</a></li>
+                        <li className={color ?"liMenuNotPoint":"liMenuNotPoint light"}  ><a onClick={() => setIsCreateChat(true)}>Создать новый чат</a></li>
                         <li className="exit"><a onClick={deleteUserAccount}>Удалить аккаунт</a></li>
-                        <li><a onClick={() => redirectTo('/update')}>Обновить данные</a></li>
+                        <li className={color ?"liMenuNotPoint":"liMenuNotPoint light"}><a onClick={() => redirectTo('/update')}>Обновить данные</a></li>
                         <li className='exit'><a className="exit" onClick={redirectToLogout}>Выйти</a></li>
                         <li>
                             <div className="toggle-switch">
