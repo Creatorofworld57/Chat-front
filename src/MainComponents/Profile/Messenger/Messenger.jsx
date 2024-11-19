@@ -3,7 +3,8 @@ import {Client} from '@stomp/stompjs';
 import {useContext, useEffect, useRef, useState} from 'react';
 import styles from './Update.module.css';
 import { jwtDecode } from "jwt-decode";
-import {Theme} from "../../../HelperModuls/ThemeContext";
+import {ChatCon} from "../../../HelperModuls/ChatContext";
+import $api from "../../../http/middleware";
 
 
 
@@ -16,16 +17,16 @@ const Messenger = () => {
     const messagesEndRef = useRef(null);
     const [decoded,setDecoded] = useState('')
     const token = localStorage.getItem('jwtToken');
-    const {setUpdateValue,setIdUpdatedValue,chatId} = useContext(Theme);
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const {setUpdateValue,setIdUpdatedValue,chatId} = useContext(ChatCon);
         const fetchData = async () => {
             try {
-                const response = await fetch(`https://localhost:8080/api/getid`, {
+                const response = await $api.get(`/api/getid`, {
                     headers: {
-                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
                 });
-                const user = await response.json();
+                const user = await response.data;
                 setName(user.id);
                 console.log(user.id);
             } catch (error) {
@@ -36,14 +37,13 @@ const Messenger = () => {
 
    const fetchMessages = async () => {
         try {
-            const response = await fetch(`https://localhost:8080/apiChats/getMessages/${chatId}`, {
-                method: 'GET',
+            const response = await $api.get(`/apiChats/getMessages/${chatId}`, {
                 headers: {
-                    'Authorization': `Bearer ${token}`,  // Добавляем токен в заголовок
+                    // Добавляем токен в заголовок
                     'Content-Type': 'application/json',
                 },
             });
-            const user = await response.json();
+            const user = await response.data;
             setMessages(user)
         } catch (error) {
             console.error('Error:', error);
@@ -53,7 +53,7 @@ const Messenger = () => {
     useEffect(() => {
         if(chatId) {
             const stompClient = new Client({
-                webSocketFactory: () => new SockJS('https://localhost:8080/ws'),
+                webSocketFactory: () => new SockJS(`${backendUrl}/ws`),
                 reconnectDelay: 5000,
                 heartbeatIncoming: 4000,
                 heartbeatOutgoing: 4000,

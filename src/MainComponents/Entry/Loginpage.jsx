@@ -29,8 +29,10 @@ const LoginPage = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                const token = data.token;  // Предположим, что сервер возвращает объект с полем token
-                localStorage.setItem('jwtToken', token);  // Сохраняем токен в localStorage
+                const token = data.token;
+                const refreshToken = data.refreshToken// Предположим, что сервер возвращает объект с полем token
+                localStorage.setItem('jwtToken', token);
+                localStorage.setItem('refreshToken',refreshToken)// Сохраняем токен в localStorage
                 // Handle successful login, e.g., save token, redirect
                 console.log('Login successful', data);
                 redirectTo('/home'); // Redirect after successful login

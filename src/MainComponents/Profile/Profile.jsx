@@ -26,11 +26,13 @@ const Profile = () => {
         setTimeout(() => {
             // Второе действие: переключаем состояние создания нового чата
             setIsCreateChat(false);
-        }, 1000); // Задержка в миллисекундах (1000ms = 1 секунда)
+        }, 1050); // Задержка в миллисекундах (1000ms = 1 секунда)
     }
     useEffect(() => {
+        setTimeout(() => {
         if(menuActive===false)
            setIsCreateChat(false)
+        }, 1050);
     }, [menuActive]);
 
 
