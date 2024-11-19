@@ -1,8 +1,12 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import './Chats.css'
 import {Theme} from "../../../HelperModuls/ThemeContext";
 import ImageMerger from "./Images/ImageMerger";
 import {ThemeMenu} from "../../../NewChat/ContextForMenu/ContextForMenu";
+import {Client} from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import {ChatCon} from "../../../HelperModuls/ChatContext";
+import $api from "../../../http/middleware";
 
 
 const Chats = () => {
@@ -11,19 +15,21 @@ const Chats = () => {
     const [activeChat, setActiveChat] = useState(0)
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const token = localStorage.getItem('jwtToken');
-    const {updated, setUpdateValue, color, idUpdated, setIdUpdatedValue, chatId, setChatIdValue} = useContext(Theme);
+    const {color} = useContext(Theme);
+    const { chatId, setChatIdValue} = useContext(ChatCon)
     const {createNewChat,setIsCreateChat} =useContext(ThemeMenu)
-
+    const [isConnected, setIsConnected] = useState(false);
+    const [client, setClient] = useState(null);
+    const clientRef = useRef(null);
     const responseForChats = async () => {
         setIsLoading(true)
-        const response = await fetch(`${backendUrl}/apiChats/getChats`, {
+        const response = await $api.get(`/apiChats/getChats`, {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,  // Добавляем токен в заголовок
+            headers: {// Добавляем токен в заголовок
                 'Content-Type': 'application/json',
             },
         })
-        const data = await response.json()
+        const data = await response.data
         setChats(data);
         setIsLoading(false)
 
@@ -41,21 +47,19 @@ const Chats = () => {
     }, [createNewChat]);
     const getLastMessage = async (id) => {
 
-        const response = await fetch(`${backendUrl}/apiChats/getLastMessage/${chatId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,  // Добавляем токен в заголовок
+        const response = await $api.get(`/apiChats/getLastMessage/${chatId}`, {
+            headers: {// Добавляем токен в заголовок
                 'Content-Type': 'application/json',
             },
         })
-        const ji = response.text()
+        const ji = response.data
         console.log(ji)
 
         return ji;
 
 
     }
-    useEffect(() => {
+   /* useEffect(() => {
         if (updated) {
             const updateLastMessage = async () => {
 
@@ -77,7 +81,55 @@ const Chats = () => {
 
         }
 
-    }, [updated, idUpdated, setUpdateValue]);
+    }, [updated, idUpdated, setUpdateValue]);*/
+
+    useEffect(() => {
+        const stompClient = new Client({
+            webSocketFactory: () => new SockJS(`${backendUrl}/ws`),
+            reconnectDelay: 5000,
+            heartbeatIncoming: 4000,
+            heartbeatOutgoing: 4000,
+            onConnect: () => {
+                console.log('Connected to WebSocket');
+                stompClient.subscribe(`/message/chatUpdated`, (message) => {
+                    const parsedMessage = JSON.parse(message.body);
+                    console.log("chat", parsedMessage);
+
+                    if (chats.some(chat => chat.id === parsedMessage.id)) {
+                        setChats(prevChats =>
+                            prevChats.map(chat =>
+                                chat.id === parsedMessage.id
+                                    ? { ...chat, lastMessage: parsedMessage.lastMessage }
+                                    : chat
+                            )
+                        );
+                    }
+                });
+                setIsConnected(true);
+            },
+            onStompError: (frame) => {
+                console.error('STOMP Error:', frame.headers['message']);
+                setIsConnected(false);
+            },
+            onWebSocketError: (error) => {
+                console.error('WebSocket Error:', error);
+                setIsConnected(false);
+            },
+        });
+
+        clientRef.current = stompClient;
+        stompClient.activate();
+
+        return () => {
+            if (clientRef.current?.active) {
+                clientRef.current.deactivate();
+                console.log('Disconnected from WebSocket');
+            }
+        };
+    }, [backendUrl, chats, setChats]);
+
+
+
 
 
     return (

@@ -1,10 +1,13 @@
 import './Home.css';
 import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 const Home = () => {
     const navigate = useNavigate();
-    const backendUrl = process.env.REACT_APP_BACKEND_URL;
-
+    useEffect(() => {
+        if( localStorage.getItem('jwtToken')!==undefined && localStorage.getItem('jwtToken')!==null )
+            navigate("/profile")
+    }, []);
     const stairTextContainerStyles = {
         textAlign: 'left', // Выровнять текст по правому краю
         lineHeight: 1.5,

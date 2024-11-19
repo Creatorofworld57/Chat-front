@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Theme } from "../../../HelperModuls/ThemeContext";
 import CreateNewChat from "../../../NewChat/CreateNewChat";
 import {ThemeMenu} from "../../../NewChat/ContextForMenu/ContextForMenu";
+import $api from "../../../http/middleware";
 
 const Menu = ({ active }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -28,19 +29,18 @@ const Menu = ({ active }) => {
 
     const redirectToLogout = () => {
         localStorage.removeItem('jwtToken');
+        localStorage.removeItem('refreshToken')
         navigate('/');
     };
 
     const getUserInfo = async () => {
         try {
-            const response = await fetch(`${backendUrl}/api/userInfo`, {
-                method: 'GET',
+            const response = await $api.get(`/api/userInfo`, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             });
-            const userImg = await response.text();
+            const userImg = await response.data;
             setUserImage(userImg);
         } catch (error) {
             console.error('Error fetching user image:', error);
@@ -49,14 +49,12 @@ const Menu = ({ active }) => {
 
     const getUser = async () => {
         try {
-            const response = await fetch(`${backendUrl}/api/infoAboutUser`, {
-                method: 'GET',
+            const response = await $api.get(`/api/infoAboutUser`, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
             });
-            const userData = await response.json();
+            const userData = await response.data;
             setUser(userData);
         } catch (error) {
             console.error('Error fetching user info:', error);
@@ -66,14 +64,13 @@ const Menu = ({ active }) => {
     const deleteUserAccount = async () => {
         try {
             if (window.confirm('Are you sure you want to delete your account?')) {
-                const response = await fetch(`${backendUrl}/api/user`, {
-                    method: 'DELETE',
+                const response = await $api.delete(`/api/user`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
                 });
-                if (response.ok) window.location.replace(`${backendUrl}/logout`);
+                if (response.status===200) window.location.replace(`${backendUrl}/logout`);
             }
         } catch (error) {
             console.error('Error deleting account:', error);

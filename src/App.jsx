@@ -6,24 +6,22 @@ import NotFoundPage from './MainComponents/NotFound/NotFoundPage';
 import Profile from './MainComponents/Profile/Profile';
 import UserForm from './MainComponents/Registration/RegisterPage';
 
-
-
-import './Styles/Audio.css';
 import AudioPlaylist from './AudioPlaylist';
 import { AudioUpload } from './AudioUpload';
 import PrivateRoute from './PrivateRoutes/PrivateRoute';
-import ContextForAudio from './HelperModuls/ContextForAudio';
+
 import Playlist from './MainComponents/Profile/Chats/Chats';
 import Home from "./MainComponents/Home/Home";
 
 import ThemeContext from "./HelperModuls/ThemeContext";
 import ContextForMenu from "./NewChat/ContextForMenu/ContextForMenu";
 import Update from "./Update/Update";
+import ChatContext from "./HelperModuls/ChatContext";
 
 const App = () => {
 
     return (
-        <ContextForAudio>
+
             <ThemeContext>
             <Router>
                     <Routes>
@@ -33,9 +31,7 @@ const App = () => {
                         <Route path="/reg" element={<UserForm />} />
                         <Route element={<PrivateRoute />}>
                             <Route path="/update" element={<Update/>} />
-
-                            <Route path="/profile" element={<ContextForMenu><Profile />   </ContextForMenu>} />
-
+                            <Route path="/profile" element={<ContextForMenu><ChatContext> <Profile /> </ChatContext>  </ContextForMenu>} />
                             <Route path="/home" element={<Welcome />} />
                             <Route path="/profile/playlist" element={<Playlist />} />
                             <Route path="/audio_upload" element={<AudioUpload />} />
@@ -44,7 +40,7 @@ const App = () => {
                     </Routes>
             </Router>
             </ThemeContext>
-        </ContextForAudio>
+
 
     );
 };

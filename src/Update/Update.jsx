@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import './Update.css';
 import { useNavigate } from "react-router-dom";
-import logo from '../logo.svg';  // Import the default logo
+import logo from '../logo.svg';
+import $api from "../http/middleware";  // Import the default logo
 
 const Update = () => {
     const [name, setName] = useState('');
@@ -37,16 +38,15 @@ const Update = () => {
         formData.append('json', new Blob([json], { type: 'application/json' }));
 
         try {
-            const response = await fetch(`${backendUrl}/api/user`, {
-                method: 'PATCH',
-                body: formData,
-                credentials: "include"
-            });
+            const response = await $api.patch(`${backendUrl}/api/user`, {
+                formData}
 
-            if (response.ok) {
+            );
+
+            if (response.status===200) {
                 alert('Data sent successfully!');
             } else {
-                const errorMessage = await response.text();
+                const errorMessage = await response.data;
                 alert(`Failed to send data: ${errorMessage}`);
             }
         } catch (error) {

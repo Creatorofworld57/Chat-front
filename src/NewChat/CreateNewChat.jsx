@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Theme } from "../HelperModuls/ThemeContext";
 import "./CreateNewChat.css";
 import { ThemeMenu } from "./ContextForMenu/ContextForMenu";
+import $api, {API_URL} from "../http/middleware";
+import axios from "axios";
 
 const CreateNewChat = () => {
     const [users, setUsers] = useState([]);
@@ -16,15 +18,14 @@ const CreateNewChat = () => {
     // Загружаем список пользователей один раз
     const getUsersList = useCallback(async () => {
         try {
-            const response = await fetch(`${backendUrl}/api/getUsers`, {
-                method: "GET",
+            const response = await $api.get(`/api/getUsers`, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+
                     "Content-Type": "application/json",
                 },
             });
-            if (response.ok) {
-                const userList = await response.json();
+            if (response.status===200) {
+                const userList = await response.data;
                 setUsers(userList);
             }
         } catch (error) {
@@ -47,21 +48,24 @@ const CreateNewChat = () => {
     // Создание чата
     const createChat = useCallback(async () => {
         try {
-            const response = await fetch(`${backendUrl}/apiChats/createChat`, {
-                method: "POST",
-                body: JSON.stringify(selectedUsers),
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            });
-            if (response.ok) {
-                setIsCreateChat(false);
+            const response = await $api.post(
+                `/apiChats/createChat`, // URL
+                selectedUsers, // Передаем массив напрямую
+                {
+                    headers: {
+                        "Content-Type": "application/json", // Указываем тип данных
+                    },
+                }
+            );
+
+            if (response.status === 200) {
+                setIsCreateChat(false); // Успешное создание чата
             }
         } catch (error) {
             console.error("Error creating chat:", error);
         }
-    }, [backendUrl, selectedUsers, setIsCreateChat, token]);
+    }, [selectedUsers, setIsCreateChat]);
+
 
     // Загружаем список пользователей при монтировании
     useEffect(() => {

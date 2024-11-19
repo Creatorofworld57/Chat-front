@@ -50,7 +50,7 @@ const UserForm = () => {
     const checking = async (name) => {
         try {
             console.log(name)
-            const Url = `https://localhost:8080/api/checking`;
+            const Url = `${backendUrl}/api/checking`;
             console.log('Backend URL:', process.env.REACT_APP_BACKEND_URL);
             const response = await fetch(Url, {
                 method: 'POST',
