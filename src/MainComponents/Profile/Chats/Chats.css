@@ -106,15 +106,7 @@
 .author-playlist.light{
     color: #2e2e2e;
 }
-.chats-container {
-    position: absolute; /* или fixed для фиксированной позиции */
-    top: 60px; /* Настраивайте отступы по мере необходимости */
-    left: 15%;
-    transform: translateX(-50%);
-    width: 100%; /* Можно задать ширину для компонента */
-    max-width: 600px; /* Ограничение ширины */
 
-}
 /* Общие стили остаются */
 .menu-items {
     position: absolute;
@@ -159,7 +151,7 @@
     .menu-items {
         left: 5%;
         top: 10%;
-        width: 90%; /* Занимает большую часть экрана */
+        width: 100%; /* Занимает большую часть экрана */
         padding-bottom: 100px;
     }
 
@@ -180,9 +172,9 @@
 }
 @media (max-width: 1300px) {
     .menu-items {
-        left: 5%;
+        left: -50px;
         top: 10%;
-        width: 70%; /* Занимает большую часть экрана */
+        width: 100%; /* Занимает большую часть экрана */
         padding-bottom: 100px;
     }
 
@@ -203,34 +195,8 @@
 }
 
 /* Смартфоны (до 480px) */
-@media (max-width: 480px) {
-    .menu-items {
-        left: 2%;
-        top: 5%;
-        width: 96%;
-        padding-bottom: 80px;
-    }
 
-    .item {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 8px;
-    }
 
-    .track-image-playlist {
-        width: 50px;
-        height: 50px; /* Уменьшаем размеры изображений */
-    }
-
-    .name-playlist {
-        font-size: 0.8rem; /* Ещё меньше текст */
-    }
-
-    .author-playlist {
-        font-size: 0.7rem; /* Ещё меньше текст */
-    }
-}
 
 /* Десктопы (широкие экраны, более 1200px) */
 @media (min-width: 1200px) {
@@ -246,9 +212,6 @@
         font-size: 1rem;
     }
 }
-
-
-
 
 
 

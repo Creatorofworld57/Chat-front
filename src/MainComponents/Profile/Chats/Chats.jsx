@@ -38,7 +38,8 @@ const Chats = () => {
 
     const handleClick = (id) => {
         setChatIdValue(id);
-        setActiveChat(id)
+        setActiveChat(id);
+
         // Правильно вызываем setDat
     };
     useEffect(() => {

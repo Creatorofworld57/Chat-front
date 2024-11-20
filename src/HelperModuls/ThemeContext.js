@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import '../MainComponents/Profile/Menu/Menu.css';
 
 export const Theme = React.createContext({
@@ -9,8 +9,17 @@ export const Theme = React.createContext({
 
 const ThemeContext = (props) => {
     // Состояния для разных переменных
-    const [color, setColor] = useState(true); // Цвет темы
-
+    const colorText = localStorage.getItem('color') === 'true'
+    const [color, setColor] = useState(colorText); // Цвет темы
+    useEffect(() => {
+        if(color===true){
+          localStorage.setItem('color','true')
+            }
+        else
+            localStorage.setItem('color','false')
+        document.body.style.backgroundColor = color ? "black" :  "lightgrey";
+        document.body.style.color = color ?"white"  : "black";
+    }, [color]);
 
     // Функции для обновления состояний
     const setColorTheme = (color) => setColor(color);
