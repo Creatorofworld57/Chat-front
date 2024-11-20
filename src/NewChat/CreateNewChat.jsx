@@ -4,7 +4,8 @@ import { Theme } from "../HelperModuls/ThemeContext";
 import "./CreateNewChat.css";
 import { ThemeMenu } from "./ContextForMenu/ContextForMenu";
 import $api, {API_URL} from "../http/middleware";
-import axios from "axios";
+import {ChatCon} from "../HelperModuls/ChatContext";
+
 
 const CreateNewChat = () => {
     const [users, setUsers] = useState([]);
@@ -14,6 +15,7 @@ const CreateNewChat = () => {
     const token = localStorage.getItem("jwtToken");
     const { color } = useContext(Theme);
     const { setIsCreateChat } = useContext(ThemeMenu);
+    const { chatId, setChatIdValue} = useContext(ChatCon)
 
     // Загружаем список пользователей один раз
     const getUsersList = useCallback(async () => {
@@ -47,22 +49,43 @@ const CreateNewChat = () => {
 
     // Создание чата
     const createChat = useCallback(async () => {
-        try {
-            const response = await $api.post(
-                `/apiChats/createChat`, // URL
-                selectedUsers, // Передаем массив напрямую
-                {
-                    headers: {
-                        "Content-Type": "application/json", // Указываем тип данных
-                    },
-                }
-            );
+        const responseExist = await $api.post(`/apiChats/chatExist`,
+            selectedUsers, // Передаем массив напрямую
+        {
+            headers: {
+                "Content-Type": "application/json", // Указываем тип данных
+            },
+        }
+        );
 
-            if (response.status === 200) {
-                setIsCreateChat(false); // Успешное создание чата
+        if(responseExist.status!==200){
+            setIsCreateChat(false)
+            setTimeout(
+                setChatIdValue(responseExist.data),
+                500
+            )
+        }
+
+            else {
+
+            try {
+
+                const response = await $api.post(
+                    `/apiChats/createChat`, // URL
+                    selectedUsers, // Передаем массив напрямую
+                    {
+                        headers: {
+                            "Content-Type": "application/json", // Указываем тип данных
+                        },
+                    }
+                );
+
+                if (response.status === 200) {
+                    setIsCreateChat(false); // Успешное создание чата
+                }
+            } catch (error) {
+                console.error("Error creating chat:", error);
             }
-        } catch (error) {
-            console.error("Error creating chat:", error);
         }
     }, [selectedUsers, setIsCreateChat]);
 

@@ -82,8 +82,6 @@ const Menu = ({ active }) => {
         const checked = event.target.checked;
         setIsChecked(checked);
         setColorTheme(!color);
-        document.body.style.backgroundColor = color ? "lightgrey" : "black";
-        document.body.style.color = color ? "black" : "white";
     };
 
 

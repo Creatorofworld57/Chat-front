@@ -162,13 +162,7 @@ p {
     padding: 10px 20px; /* внутренние отступы */
 }
 
-.hj {
 
-}
-
-.inputFor {
-
-}
 
 .link-preview {
     position: fixed; /* фиксируем положение кнопки */
@@ -238,7 +232,22 @@ p {
     height: 20%;
 }
 
-
+@media(max-width: 800px){
+    .messanger-container {
+        width: 80%;
+    }
+}
+@media(max-width: 1690px){
+    .messanger-container {
+        width: 90%;
+    }
+}
+@media(max-width: 1368px){
+    .messanger-container {
+        width: 87%;
+        max-width: 110%;
+    }
+}
 .blur {
     width: 0;
     height: 0;
@@ -258,4 +267,47 @@ p {
     /* Фоновое изображение */
     background-size: cover; /* Покрывает весь экран */
     transition: all 1s;
+}
+.chats-container {
+    position: absolute; /* или fixed для фиксированной позиции */
+    top: 60px; /* Настраивайте отступы по мере необходимости */
+    left: 15%;
+    transform: translateX(-50%);
+    width: 100%; /* Можно задать ширину для компонента */
+    max-width: 600px; /* Ограничение ширины */
+
+}
+@media(max-width: 500px){
+    .chats-container {
+      margin-left: -60px; /* Начинаем от левого края */
+        width: 60%; /* Заполняем всю ширину экрана */
+        max-width: none; /* Убираем ограничение ширины */
+        transform: none;
+        right: 20px/* Убедитесь, что нет сдвига */
+    }
+}
+
+@media(max-width: 800px){
+    .chats-container{
+        width: 70%;
+        left:30%
+    }
+}
+@media (max-width: 1948px) {
+    .chats-container{
+        width: 90%;
+        left:17%
+    }
+}
+@media (max-width: 1690px) {
+    .chats-container{
+        width: 80%;
+        left:24%
+    }
+}
+@media (max-width: 1368px) {
+    .chats-container{
+        width: 80%;
+        left:30%
+    }
 }
