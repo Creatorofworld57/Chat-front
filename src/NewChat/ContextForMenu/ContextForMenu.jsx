@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 
 
 export const ThemeMenu = React.createContext({
-    createNewChat: false,
+    createNewChat: 0,
 
     setIsCreateChat: (bool) => {},    // Указываем, что функция принимает аргумент
 });
 
 const ContextForMenu = (props) => {
     // Состояния для разных переменных
-    const [ createNewChat, setIdUpdated] = useState(false); // Задать начальное значение как строку
+    const [ createNewChat, setIdUpdated] = useState(0); // Задать начальное значение как строку 0-false 1 -createChat 2-settings
 
     // Функции для обновления состояний
     const  setIsCreateChat = (idUpdated) => setIdUpdated(idUpdated);

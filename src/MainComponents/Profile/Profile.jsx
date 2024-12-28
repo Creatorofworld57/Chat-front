@@ -14,27 +14,41 @@ const Profile = () => {
     const {createNewChat,setIsCreateChat} =useContext(ThemeMenu)
     const [showMessenger, setShowMessenger] = useState(true);
     const [showChats, setShowChats] = useState(true);
-    const { chatId,setChatIdValue} = useContext(ChatCon)
+    const { chatId} = useContext(ChatCon)
     // Функция для проверки ширины окна
     const checkWindowSize = () => {
-        if (window.innerWidth <= 768) {
-            setChatIdValue(0)// Укажите нужное разрешение, например, 768px
-           setShowMessenger(false); // Показать объект
-        } else {
+        if (window.innerWidth <= 868 && chatId!==0) {
+            console.log(chatId +"first")
+            setShowChats(false)
+            setShowMessenger(true)
+
+        }
+
+        else if (window.innerWidth <= 868 && chatId===0){
+            console.log(chatId +"second")
+            setShowChats(true)
+            setShowMessenger(false)
+        }
+
+        else {
+            console.log(chatId +"third")
             setShowChats(true);
-            setShowMessenger(true)// Скрыть объект
+            setShowMessenger(true)
         }
     };
+
+
     useEffect(() => {
-        if (window.innerWidth <= 768 ) {
-        setShowChats(false);
-        setShowMessenger(true)}
+        if (window.innerWidth <= 868 && chatId !==0) {
+            setShowChats(false)
+            setShowMessenger(true)
+        }
     }, [chatId]);
 
     useEffect(() => {
         // Проверить размер окна при загрузке компонента
         checkWindowSize();
-        setShowChats(true)
+
         // Добавить обработчик события изменения размера окна
         window.addEventListener('resize', checkWindowSize);
 
@@ -49,25 +63,25 @@ const Profile = () => {
         navigate(url);
     };
     useEffect(() => {
-        if(createNewChat===false)
+        if(createNewChat===0)
             setMenuActive(false)
     }, [createNewChat]);
     const activeMenu =()=>{
         setMenuActive(!menuActive)
-        setTimeout(() => {
             // Второе действие: переключаем состояние создания нового чата
-            setIsCreateChat(false);
-        }, 1050); // Задержка в миллисекундах (1000ms = 1 секунда)
+            setIsCreateChat(0)
+      // Задержка в миллисекундах (1000ms = 1 секунда)
     }
     useEffect(() => {
-        setTimeout(() => {
+
         if(menuActive===false)
-           setIsCreateChat(false)
-        }, 1050);
+           setIsCreateChat(0)
+
     }, [menuActive]);
    const changer = ()=>{
        setShowChats(!showChats)
        setShowMessenger(!showMessenger)
+
    }
 
     return (
@@ -79,9 +93,6 @@ const Profile = () => {
                     <span className={menuActive ? 'line3 active' : 'line3'}/>
                 </div>
             </nav>
-
-
-            <button className="back_up" onClick={() => redirectTo('/home')}></button>
             <div className={menuActive ? 'blur active' : 'blur'} onClick={() => activeMenu()}/>
 
             <Menu active={menuActive} setActive={setMenuActive}/>

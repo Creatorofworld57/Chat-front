@@ -7,7 +7,7 @@ const NotFoundPage = () => {
   const navigate = useNavigate();
 
   const redirectToHome = () => {
-    navigate('/home');
+    navigate('/');
   };
 
   return (

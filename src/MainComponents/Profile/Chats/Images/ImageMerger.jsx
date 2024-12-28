@@ -78,7 +78,7 @@ const ImageMerger = ({ chatIds }) => {
 
     // Если chatIds содержит ровно 2 элемента, рендерим только <img>
     if (chatIds.length === 2) {
-        console.log(filteredChatIds[0] +" lenght" +filteredChatIds.length)
+
         return <img src={`${backendUrl}/api/images/${filteredChatIds[0]}`} alt="Single" style={{ width: '50px', height: '50px' }} />;
     }
 

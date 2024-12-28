@@ -239,12 +239,12 @@ p {
 }
 @media(max-width: 1690px){
     .messanger-container {
-        width: 90%;
+        width: 50%;
     }
 }
 @media(max-width: 1368px){
     .messanger-container {
-        width: 87%;
+        width: 40%;
         max-width: 110%;
     }
 }
@@ -278,24 +278,23 @@ p {
 
 }
 @media(max-width: 500px){
-    .chats-container {
-      margin-left: -60px; /* Начинаем от левого края */
+    .chats-container { /* Начинаем от левого края */
         width: 60%; /* Заполняем всю ширину экрана */
         max-width: none; /* Убираем ограничение ширины */
         transform: none;
-        right: 20px/* Убедитесь, что нет сдвига */
+       /* Убедитесь, что нет сдвига */
     }
 }
 
-@media(max-width: 800px){
+@media(max-width: 868px){
     .chats-container{
-        width: 70%;
-        left:30%
+        width: 80%;
+        margin-left: 10%;
     }
 }
 @media (max-width: 1948px) {
     .chats-container{
-        width: 90%;
+        width: 100%;
         left:17%
     }
 }
@@ -308,6 +307,6 @@ p {
 @media (max-width: 1368px) {
     .chats-container{
         width: 80%;
-        left:30%
+        left:40%
     }
 }

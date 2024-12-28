@@ -5,9 +5,10 @@ import "./CreateNewChat.css";
 import { ThemeMenu } from "./ContextForMenu/ContextForMenu";
 import $api, {API_URL} from "../http/middleware";
 import {ChatCon} from "../HelperModuls/ChatContext";
+import SearchBar from "./search";
 
 
-const CreateNewChat = () => {
+const CreateNewChat = ({active}) => {
     const [users, setUsers] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const navigate = useNavigate();
@@ -15,8 +16,10 @@ const CreateNewChat = () => {
     const token = localStorage.getItem("jwtToken");
     const { color } = useContext(Theme);
     const { setIsCreateChat } = useContext(ThemeMenu);
-    const { chatId, setChatIdValue} = useContext(ChatCon)
+    const {setActiveChatValue, chatId, setChatIdValue} = useContext(ChatCon)
 
+    const [filteredData, setFilteredData] = useState([]);
+    const data = ['Apple', 'Banana', 'Cherry', 'Date', 'Fig', 'Grape'];
     // Загружаем список пользователей один раз
     const getUsersList = useCallback(async () => {
         try {
@@ -49,24 +52,6 @@ const CreateNewChat = () => {
 
     // Создание чата
     const createChat = useCallback(async () => {
-        const responseExist = await $api.post(`/apiChats/chatExist`,
-            selectedUsers, // Передаем массив напрямую
-        {
-            headers: {
-                "Content-Type": "application/json", // Указываем тип данных
-            },
-        }
-        );
-
-        if(responseExist.status!==200){
-            setIsCreateChat(false)
-            setTimeout(
-                setChatIdValue(responseExist.data),
-                500
-            )
-        }
-
-            else {
 
             try {
 
@@ -81,12 +66,20 @@ const CreateNewChat = () => {
                 );
 
                 if (response.status === 200) {
-                    setIsCreateChat(false); // Успешное создание чата
+                    setIsCreateChat(0); // Успешное создание чата
+                }
+                else{
+                    setIsCreateChat(0)
+                    setTimeout(
+                        setChatIdValue(response.data),
+                        setActiveChatValue(response.data),
+                        500
+                    )
                 }
             } catch (error) {
                 console.error("Error creating chat:", error);
             }
-        }
+
     }, [selectedUsers, setIsCreateChat]);
 
 
@@ -122,8 +115,14 @@ const CreateNewChat = () => {
     );
 
     return (
-        <div className={color ? "menu-items-newChat" : "menu-items light"}>
+        <div  className={active ? !color? "menu active light": "menu active" : !color ? "menu light":"menu"}>
             <ul>
+                <SearchBar data={data} onSearch={setFilteredData} />
+                <ul>
+                    {filteredData.map((item, index) => (
+                        <li key={index}>{item}</li>
+                    ))}
+                </ul>
                 {users && users.length > 0 ? renderedUsers : <li>No users available</li>}
                 <li className="Create" onClick={createChat}>
                     Создать чат

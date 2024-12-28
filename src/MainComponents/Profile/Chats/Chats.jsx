@@ -12,14 +12,12 @@ import $api from "../../../http/middleware";
 const Chats = () => {
     const [chats, setChats] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-    const [activeChat, setActiveChat] = useState(0)
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const token = localStorage.getItem('jwtToken');
     const {color} = useContext(Theme);
-    const { chatId, setChatIdValue} = useContext(ChatCon)
+    const {activeChat,setActiveChatValue, chatId, setChatIdValue } = useContext(ChatCon)
     const {createNewChat,setIsCreateChat} =useContext(ThemeMenu)
     const [isConnected, setIsConnected] = useState(false);
-    const [client, setClient] = useState(null);
     const clientRef = useRef(null);
     const responseForChats = async () => {
         setIsLoading(true)
@@ -37,15 +35,18 @@ const Chats = () => {
     // Деструктурируем setDat
 
     const handleClick = (id) => {
+
         setChatIdValue(id);
-        setActiveChat(id);
+        console.log(chatId + " chats")
+        setActiveChatValue(id);
 
         // Правильно вызываем setDat
     };
     useEffect(() => {
-        if(createNewChat===false)
+        if(createNewChat===0)
              responseForChats();
     }, [createNewChat]);
+
     const getLastMessage = async (id) => {
 
         const response = await $api.get(`/apiChats/getLastMessage/${chatId}`, {
@@ -105,7 +106,11 @@ const Chats = () => {
                             )
                         );
                     }
-                });
+                },
+                    {
+                        Authorization: `Bearer ${token}`, // Передаем токен или другой заголовок
+                        ChatId: chatId.toString(),
+                    }  );
                 setIsConnected(true);
             },
             onStompError: (frame) => {
@@ -167,3 +172,8 @@ const Chats = () => {
     );
 };
 export default Chats;
+
+
+
+
+
