@@ -11,7 +11,8 @@
 .chatHeader {
     background-color: #0078d7;
     color: #fff;
-    padding: 10px;
+    padding: 20px;
+    font-size: 1rem;
     text-align: center;
 }
 
@@ -24,12 +25,25 @@
     flex-direction: column;
     gap: 8px;
 }
+.chatWindowLight{
+    background-color: dimgrey;
+    padding: 10px;
+    height: 600px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
 
 .chatMessage {
     padding: 8px 10px;
     border-radius: 10px;
     max-width: 70%;
+    word-wrap: break-word; /* Перенос длинных слов */
+    overflow-wrap: break-word; /* Альтернативный способ для современных браузеров */
+    white-space: pre-wrap; /* Сохраняет переносы строк, если они есть, и переносит текст */
 }
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -52,6 +66,10 @@
     background-color: #e0e0e0;
     color: #333;
     animation: fadeIn 0.5s ease forwards;
+    display: flex;
+    flex-direction: column; /* Дочерние элементы располагаются вертикально */
+    padding: 5px; /* Отступы для улучшения внешнего вида */
+    border-radius: 5px; /* Радиус для скругления углов */
 }
 
 .chatInput {
@@ -84,4 +102,30 @@
 
 .sendButton:hover {
     background-color: #005a9e;
+}
+.chatImage {
+    max-width: 100%; /* Изображение не превышает ширину родительского контейнера */
+    height: auto; /* Сохраняет пропорции изображения */
+    border-radius: 8px; /* Округлённые углы */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Лёгкая тень для улучшения визуального эффекта */
+    margin-top: 10px; /* Отступ сверху */
+    margin-bottom: 10px; /* Отступ снизу */
+}
+.imageFrame {
+
+    padding: 5px; /* Отступ между изображением и рамкой */
+    margin: 10px 0; /* Отступы сверху и снизу */
+    display: inline-block; /* Отображение как блочный элемент */
+
+
+}
+.strTime{
+    margin-bottom: 2px;
+
+}
+.messageTimestamp {
+    font-size: 0.75rem; /* Уменьшенный размер текста */
+    color: black;
+    margin-top: 5px;
+    text-align: right; /* Выровнять время по правому краю */
 }

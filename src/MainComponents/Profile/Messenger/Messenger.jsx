@@ -1,10 +1,12 @@
 import SockJS from 'sockjs-client';
 import {Client} from '@stomp/stompjs';
-import {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import styles from './Update.module.css';
 import { jwtDecode } from "jwt-decode";
 import {ChatCon} from "../../../HelperModuls/ChatContext";
 import $api from "../../../http/middleware";
+
+import {Theme} from "../../../HelperModuls/ThemeContext";
 
 
 
@@ -15,25 +17,96 @@ const Messenger = () => {
     const [isConnected, setIsConnected] = useState(false);
     const [client, setClient] = useState(null);
     const messagesEndRef = useRef(null);
-    const [decoded,setDecoded] = useState('')
+    const [decoded, setDecoded] = useState('')
     const token = localStorage.getItem('jwtToken');
-    const backendUrl = process.env.REACT_APP_BACKEND_URL;
-    const {setUpdateValue,setIdUpdatedValue,chatId} = useContext(ChatCon);
-        const fetchData = async () => {
-            try {
-                const response = await $api.get(`/api/getid`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                const user = await response.data;
-                setName(user.id);
-                console.log(user.id);
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
+    const [tittle, setTittle] = useState("Чат");
+    const [chatOverView, setChatOverView] = useState(true)
+    const [fileType, setFileType] = useState('');
+    const [file, setFile] = useState(null);
+    const [files, setFiles] = useState([]);
 
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const {setUpdateValue, setIdUpdatedValue, chatId} = useContext(ChatCon);
+    const {color} = useContext(Theme);
+    const fetchData = async () => {
+        try {
+            const response = await $api.get(`/api/getid`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const user = await response.data;
+            setName(user.id);
+            console.log(user.id);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    function chunkFile(file, chunkSize) {
+        const chunks = [];
+        let start = 0;
+
+        while (start < file.size) {
+            const chunk = file.slice(start, start + chunkSize);
+            chunks.push(chunk);
+            start += chunkSize;
+        }
+
+        return chunks;
+    }
+
+    async function sendFile(file) {
+        const formData = new FormData();
+        formData.append('file', file);  // Добавляем файл в FormData
+
+        try {
+            const response = await $api.post(`/api/chat_files`, formData, {
+                headers: {
+                    'ChatId': chatId.toString(),  // Указываем ChatId в заголовках
+                },
+            });
+
+            console.log('File uploaded successfully:', response.data);
+        } catch (error) {
+            console.error('Error uploading file:', error);
+        }
+
+
+
+        /*   const chunks = chunkFile(file, chunkSize);
+           const totalChunks = chunks.length;
+
+           chunks.forEach((chunk, index) => {
+               const reader = new FileReader();
+
+               reader.onload = function (event) {
+                   const payload = {
+                       chunkNumber: index,
+                       data: event.target.result,
+                       name:files[0].name,// Базовый64-данные
+                       isLastChunk: index === totalChunks - 1
+                   };
+                   client.publish({
+                       destination: '/app/chat',
+                       body:JSON.stringify(payload) ,
+                       headers: {
+                           'Authentication': `Bearer ${token}`,
+                           'ChatId': chatId.toString(),
+                           'Content-Type': files[0].type || 'application/octet-stream'
+                       },
+                   });
+                   console.log(files[0].type)
+                   console.log(files[0].name)
+                   setInputMessage('');
+
+                   console.log(`Sent chunk ${index + 1}/${totalChunks}`);
+               };
+
+               reader.readAsDataURL(chunk); // Конвертируем Blob в Base64
+           });*/
+        setFiles([])
+    }
 
    const fetchMessages = async () => {
         try {
@@ -60,6 +133,7 @@ const Messenger = () => {
                 onConnect: () => {
                     console.log('Connected to WebSocket');
                     stompClient.subscribe(`/message/chatGet/${chatId}`, (message) => {
+                        console.log(message.body)
                         const parsedMessage = JSON.parse(message.body);
                         setUpdateValue(true)
                         setIdUpdatedValue(parsedMessage.chat.id)
@@ -99,9 +173,12 @@ const Messenger = () => {
     }, []);
 
     useEffect(() => {
-        fetchData();
-        fetchMessages();
-        decodeToken();
+        if(chatId!==0){
+            fetchData();
+            fetchMessages();
+            decodeToken();
+            tittleImgAndData();
+        }
     }, [chatId]);
 
     useEffect(() => {
@@ -118,68 +195,134 @@ const Messenger = () => {
         }
     }
     const sendMessage = () => {
-        if (inputMessage && client) {
-           setUpdateValue(true)
+        console.log("Длина массива " + files.length)
+        if (inputMessage&& client.connected && client && files.length === 0) {
+            console.log("TEXT")
+            setUpdateValue(true)
             setIdUpdatedValue(chatId)
-            const messageContent = {
-                content: inputMessage,
+
+            const payload = {
+                data: inputMessage,
                 id: chatId,
                 token: token
             };
-            console.log(JSON.stringify(messageContent));
+            console.log(JSON.stringify(payload));
 
             client.publish({
                 destination: '/app/chat',
-                body: JSON.stringify(messageContent),
+                body: JSON.stringify(payload),
                 headers: {
                     'content-type': 'application/json',
+                    'Authentication': `Bearer ${token}`,
+                    'ChatId': chatId.toString(),
+                    'Content-Type': 'text'
                 },
             });
 
             setInputMessage(''); // Очищаем поле ввода после отправки
         }
+        else if(client && client.connected && files.length!==0 && files.length<2){
+            sendFile(files[0])
+
+        }
     };
 
+
+    const tittleImgAndData = async () => {
+
+        const response = await $api.get(`/apiChats/getChats/${chatId}`)
+        const dat = await response.data
+        setTittle(dat.name)
+    }
 
     // Обновленный компонент чата с onKeyDown вместо onKeyPress
     return (
         <div className={styles.chatContainer}>
-            <div className={styles.chatHeader}>
-                <h2>Chat Room</h2>
-            </div>
-            <div className={styles.chatWindow}>
-                {messages.map((msg, index) => (
-                    <div
-                        key={index}
-                        className={`${styles.chatMessage} ${
-                            msg.sender === decoded.id ? styles.user : styles.other
-                        }`}
-                    >
-                        <strong> {msg.sender === decoded.id ?'':msg.nameUser+':'}</strong> {msg.content}
+            {chatOverView ? (
+                <div>
+                    <div className={styles.chatHeader}>{tittle}</div>
+                    <div className={!color ? styles.chatWindow : styles.chatWindowLight}>
+                        {messages.length > 0 ? (
+                            messages.map((msg, index) => (
+                                <div
+                                    key={index}
+                                    className={`${styles.chatMessage} ${
+                                        msg.sender === decoded.id ? styles.user : styles.other
+                                    }`}
+                                >
+                                    <strong>
+                                        {msg.sender === decoded.id ? '' : msg.nameUser + ':'}
+                                    </strong>
+                                    <div className={styles.messageContent}>
+                                        {msg.links && msg.links.length > 0 ? (
+                                            <div className={styles.imageFrame}>
+                                                <img
+                                                    src={`https://localhost:8080/api/chat/get_file/${msg.links[0]}`}
+                                                    alt="Uploaded file"
+                                                    className={styles.chatImage}
+                                                />
+                                            </div>
+                                        ) : (
+                                            msg.content || <i>No content</i>
+                                        )}
+                                    </div>
+                                    <div className={styles.messageTimestamp}>
+                                        {new Date(msg.timestamp).toLocaleTimeString('ru-RU', {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                        })}
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div></div>
+                        )}
+                        <div ref={messagesEndRef} />
                     </div>
-                ))}
-                <div ref={messagesEndRef} />
-            </div>
-            <div className={styles.chatInput}>
-                <input
-                    type="text"
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    placeholder="Type a message..."
-                    className={styles.messageInput}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault(); // Предотвращаем перенос строки
-                            sendMessage(); // Отправляем сообщение при нажатии Enter
-                        }
-                    }}
-                />
-                <button onClick={sendMessage} className={styles.sendButton}>
-                    Send
-                </button>
-            </div>
+                    {chatId !== 0 && (
+                        <div className={styles.chatInput}>
+                            <input
+                                type="text"
+                                value={inputMessage}
+                                onChange={(e) => setInputMessage(e.target.value)}
+                                placeholder="Type a message..."
+                                className={styles.messageInput}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        sendMessage();
+                                    }
+                                }}
+                            />
+                            <div className="file-input-container">
+                                <label className="file-input-label" htmlFor="file">
+                                    загрузить файл
+                                </label>
+                                <input
+                                    type="file"
+                                    id="file"
+                                    name="file"
+                                    onChange={(e) =>
+                                        setFiles((prevFiles) => [...prevFiles, ...Array.from(e.target.files)])
+                                    }
+                                    required
+                                />
+                            </div>
+                            <button onClick={sendMessage} className={styles.sendButton}>
+                                Send
+                            </button>
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div></div>
+            )}
         </div>
     );
+
+
+
+
 
 };
 

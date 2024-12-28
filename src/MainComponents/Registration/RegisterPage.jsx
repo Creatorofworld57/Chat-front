@@ -38,7 +38,7 @@ const UserForm = () => {
             localStorage.setItem('jwtToken', token);  // Сохраняем токен в localStorage
             // Handle successful login, e.g., save token, redirect
             console.log('Login successful', localStorage.getItem('jwtToken'));
-            redirectTo('/home'); // Redirect after successful login
+            redirectTo('/profile'); // Redirect after successful login
         } else {
             // Handle errors, e.g., wrong credentials
            console.log("bad registr")
