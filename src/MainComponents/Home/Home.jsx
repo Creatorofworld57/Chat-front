@@ -29,10 +29,10 @@ const Home = () => {
         <div>
             <img className="imgBack" src="" alt="background"/>
             <div className="text-wrapper" style={stairTextContainerStyles}>
-                <div style={{...musicTextStyles, marginRight: '0px'}}>Окунись</div>
-                <div style={{...musicTextStyles, marginRight: '40px'}}>в мир</div>
-                <div style={{...musicTextStyles, marginRight: '80px'}}>музыки</div>
-                <div style={{...musicTextStyles, marginRight: '120px'}}>прямо сейчас</div>
+                <div style={{...musicTextStyles, marginRight: '200px'}}>Го</div>
+                <div style={{...musicTextStyles, marginRight: '75px'}}>в чат </div>
+                <div style={{...musicTextStyles, marginRight: '-200px'}}>прямо сейчас</div>
+
             </div>
             <button className="submit-button__button submit" onClick={() => redirectTo('/login')}>Войти или зарегистрироваться</button>
         </div>

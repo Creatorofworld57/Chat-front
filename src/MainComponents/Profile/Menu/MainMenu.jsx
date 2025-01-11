@@ -1,30 +1,27 @@
 import React, { useContext, useEffect, useState } from 'react';
 import './Menu.css';
-import { useNavigate } from "react-router-dom";
+
 import { Theme } from "../../../HelperModuls/ThemeContext";
 import CreateNewChat from "../../../NewChat/CreateNewChat";
-import {ThemeMenu} from "../../../NewChat/ContextForMenu/ContextForMenu";
-import $api from "../../../http/middleware";
-import settings from "./Settings";
 
-const MainMenu = ({ active }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [isRotated, setIsRotated] = useState(false);
+import $api from "../../../http/middleware";
+
+import {useDispatch, useSelector} from "react-redux";
+import {fourcrement, threecrement, twocrement} from "../../../Reducers/counterReducer";
+
+const MainMenu = () => {
+
     const [user, setUser] = useState(null);
     const [userImage, setUserImage] = useState('');
     const [isChecked, setIsChecked] = useState(false);
+    const active =useSelector((state) => state.menu_red.value);
 
-    const {createNewChat ,setIsCreateChat} =useContext(ThemeMenu)
-
-
+    const createNewChat = useSelector((state) => state.example.value);
+    const dispatch = useDispatch();
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
-    const token = localStorage.getItem('jwtToken');
+
     const { color, setColorTheme } = useContext(Theme);
-    const navigate = useNavigate();
-    const toggleToolbar = () => {
-        setIsOpen(!isOpen);
-        setIsRotated(!isRotated);
-    };
+
 
 
     const getUserInfo = async () => {
@@ -83,9 +80,9 @@ const MainMenu = ({ active }) => {
                                 <li className={color ?"liMenu":"liMenu light"}>Updated: {new Date(user.updatedAt).toLocaleDateString()}</li>
                             </>
                         )}
-                        <li className={color ?"liMenuNotPoint":"liMenuNotPoint light"}  ><a onClick={() => setIsCreateChat(1)}>Создать новый чат</a></li>
-                        <li className="exit"><a onClick={()=>setIsCreateChat(2)}>Настройки</a></li>
-                        <li className={color ?"liMenuNotPoint":"liMenuNotPoint light"}><a onClick={()=>setIsCreateChat(3)}>Друзья</a></li>
+                        <li className={color ?"liMenuNotPoint":"liMenuNotPoint light"}  ><a onClick={() => dispatch(twocrement())}>Создать новый чат</a></li>
+                        <li className="exit"><a onClick={()=>dispatch(threecrement())}>Настройки</a></li>
+                        <li className={color ?"liMenuNotPoint":"liMenuNotPoint light"}><a onClick={()=>dispatch(fourcrement())}>Друзья</a></li>
 
                         <li>
                             <div className="toggle-switch">

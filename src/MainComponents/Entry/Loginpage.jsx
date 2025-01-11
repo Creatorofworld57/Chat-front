@@ -58,14 +58,14 @@ const LoginPage = () => {
                         alt="GitHub Logo"
                         className="logo"
                     />
-                    <h1>Sign in to Base</h1>
+                    <h1>Вход в чат</h1>
 
                     <input
                         className="inputLog"
                         type="text"
                         id="name"
                         name="name"
-                        placeholder="Enter your Name"
+                        placeholder="Введите имя"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
@@ -76,7 +76,7 @@ const LoginPage = () => {
                         type="password"
                         id="password"
                         name="password"
-                        placeholder="Enter your password"
+                        placeholder="Введите пароль"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -88,20 +88,20 @@ const LoginPage = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            Continue with <FaGithub />
+                            Продолжить с  <FaGithub />
                         </a>
                     </div>
 
                     {errorMessage && <p className="error-message">{errorMessage}</p>}
 
                     <button className="button" type="submit">
-                        Login
+                       Войти
                     </button>
                 </div>
             </form>
 
             <a className="reg_ref" onClick={() => redirectTo('/reg')}>
-                I haven't account
+               У меня нет аккаунта
             </a>
         </div>
     );

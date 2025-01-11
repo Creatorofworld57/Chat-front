@@ -2,11 +2,11 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import './Chats.css'
 import {Theme} from "../../../HelperModuls/ThemeContext";
 import ImageMerger from "./Images/ImageMerger";
-import {ThemeMenu} from "../../../NewChat/ContextForMenu/ContextForMenu";
 import {Client} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import {ChatCon} from "../../../HelperModuls/ChatContext";
 import $api from "../../../http/middleware";
+import { useSelector} from "react-redux";
 
 
 const Chats = () => {
@@ -16,7 +16,8 @@ const Chats = () => {
     const token = localStorage.getItem('jwtToken');
     const {color} = useContext(Theme);
     const {activeChat,setActiveChatValue, chatId, setChatIdValue } = useContext(ChatCon)
-    const {createNewChat,setIsCreateChat} =useContext(ThemeMenu)
+   // const {createNewChat,setIsCreateChat} =useContext(ThemeMenu)
+    const createNewChat = useSelector((state) => state.example.value);
     const [isConnected, setIsConnected] = useState(false);
     const clientRef = useRef(null);
     const responseForChats = async () => {
@@ -36,6 +37,14 @@ const Chats = () => {
 
     const handleClick = (id) => {
 
+            setChats((prevChats) => {
+                // Находим выбранный чат
+                const selectedChat = prevChats.find(chat => chat.id === id);
+                // Фильтруем остальные чаты
+                const remainingChats = prevChats.filter(chat => chat.id !== id);
+                // Возвращаем новый массив с выбранным чатом в конце
+                return [...remainingChats, selectedChat];
+            });
         setChatIdValue(id);
         console.log(chatId + " chats")
         setActiveChatValue(id);
@@ -43,47 +52,10 @@ const Chats = () => {
         // Правильно вызываем setDat
     };
     useEffect(() => {
-        if(createNewChat===0)
-             responseForChats();
-    }, [createNewChat]);
-
-    const getLastMessage = async (id) => {
-
-        const response = await $api.get(`/apiChats/getLastMessage/${chatId}`, {
-            headers: {// Добавляем токен в заголовок
-                'Content-Type': 'application/json',
-            },
-        })
-        const ji = response.data
-        console.log(ji)
-
-        return ji;
-
-
-    }
-   /* useEffect(() => {
-        if (updated) {
-            const updateLastMessage = async () => {
-
-                    const newLastMessage = await getLastMessage(idUpdated);
-                    console.log("log"+ newLastMessage)
-                    setChats(prevChats =>
-                        prevChats.map(chat =>
-                            chat.id === idUpdated
-                                ? {...chat, lastMessage: newLastMessage}
-                                : chat
-                        )
-                    );
-
-
-                    setUpdateValue(false);
-                   setIdUpdatedValue(0)// Сбрасываем updated после обновления lastMessage
-                }
-            updateLastMessage();
-
+        if(createNewChat===0) {
+            responseForChats();
         }
-
-    }, [updated, idUpdated, setUpdateValue]);*/
+    }, [createNewChat]);
 
     useEffect(() => {
         const stompClient = new Client({
@@ -140,31 +112,60 @@ const Chats = () => {
 
     return (
         <div>
+            <div>
+                <div style={{
+                    width: "100%",
+                    maxWidth: "400px",
+                    margin: "0px ", /* Центрирование с меньшими отступами сверху и снизу */
+                    padding: "0 10px" /* Уменьшение отступа слева и справа */
+                }}>
+                    <input
+                        type="text"
+                        placeholder="Поиск..."
+                        style={{
+                            width: "100%",
+                            padding: "5px 15px", /* Более приятные внутренние отступы */
+                            fontSize: "16px",
+                            borderRadius: "8px", /* Скругленные углы */
+                            border: "1px solid #ccc",
+                            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", /* Легкая тень */
+                            backgroundColor: "#2c2f33", /* Тёмный фон для контраста */
+                            color: "white",
+                            outline: "none", /* Убираем стандартную рамку при фокусе */
+                            transition: "border-color 0.3s", /* Анимация на изменение границы */
+                        }}
+                        onFocus={(e) => e.target.style.borderColor = "#4a90e2"} /* Изменение границы при фокусе */
+                        onBlur={(e) => e.target.style.borderColor = "#ccc"} /* Возврат цвета границы */
+                    />
+                </div>
+            </div>
+
             <div className={color ? "menu-items" : "menu-items light"}>
 
-                    {isLoading ? (
-                        Array.from({length: 5}).map((_, index) => (
-                            <li key={index} className="skeleton-track-item">
-                                <div className="skeleton-image1"></div>
-                                <div className="skeleton-text1"></div>
-                            </li>
-                        ))
-                    ) : chats && chats.length > 0 ? (
-                        chats.slice().reverse().map((chat, index) => (
-                            <li  key={index} className={activeChat === chat.id ? "item active" : "item"} onClick={() => handleClick(chat.id)}>
-                                <ImageMerger chatIds={chat.participants}/>
-                                <div className="playlist-container">
-                                    <div className={color ? "name-playlist" : "name-playlist light"}
-                                      >{chat.name}</div>
-                                    <div
-                                        className={color ? "author-playlist" : "author-playlist light"}>{chat.lastMessage !== null && chat.lastMessage.length > 20 ? chat.lastMessage.substring(0, 20) + '...' : chat.lastMessage}</div>
-                                </div>
+                {isLoading ? (
+                    Array.from({length: 5}).map((_, index) => (
+                        <li key={index} className="skeleton-track-item">
+                            <div className="skeleton-image1"></div>
+                            <div className="skeleton-text1"></div>
+                        </li>
+                    ))
+                ) : chats && chats.length > 0 ? (
+                    chats.slice().reverse().map((chat, index) => (
+                        <li key={index} className={activeChat === chat.id ? "item active" : "item"}
+                            onClick={() => handleClick(chat.id)}>
+                            <ImageMerger chatIds={chat.participants}/>
+                            <div className="playlist-container">
+                                <div className={color ? "name-playlist" : "name-playlist light"}
+                                >{chat.name}</div>
+                                <div
+                                    className={color ? "author-playlist" : "author-playlist light"}>{chat.lastMessage !== null && chat.lastMessage.length > 20 ? chat.lastMessage.substring(0, 20) + '...' : chat.lastMessage}</div>
+                            </div>
 
-                            </li>
-                        ))
-                    ) : (
-                        <li>Чаты не найдены</li>
-                    )}
+                        </li>
+                    ))
+                ) : (
+                    <li>Чаты не найдены</li>
+                )}
 
             </div>
         </div>

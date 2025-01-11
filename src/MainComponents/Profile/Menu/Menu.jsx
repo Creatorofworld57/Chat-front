@@ -1,31 +1,31 @@
-import React, { useContext, useState } from 'react';
+
 import './Menu.css';
-import { Theme } from "../../../HelperModuls/ThemeContext";
 import CreateNewChat from "../../../NewChat/CreateNewChat";
 
 import MainMenu from "./MainMenu";
 import Settings from "./Settings";
-import {ThemeMenu} from "../../../NewChat/ContextForMenu/ContextForMenu";
+
 import Friends from "./Friends";
+import {useSelector} from "react-redux";
 
-const Menu = ({ active }) => {
+const Menu = () => {
 
 
-    const {createNewChat} = useContext(ThemeMenu);
-
+    const createNewChat = useSelector((state) => state.example.value);
+    const active =useSelector((state) => state.menu_red.value);
 
 
 
     const renderActiveView = () => {
         switch (createNewChat) {
             case 0:
-                return <MainMenu active={active}/>;
+                return <MainMenu/>;
             case 1:
-                return <CreateNewChat active={active}  />;
+                return <CreateNewChat   />;
             case 2:
-                return <Settings active={active}  />
+                return <Settings   />
             case 3:
-                return <Friends active={active}/>
+                return <Friends />
             default:
                 return null;
         }
