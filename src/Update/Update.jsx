@@ -84,13 +84,13 @@ const Update = () => {
     };
     return (
         <div className="form-container">
-            <h1>Enter Data</h1>
+            <h1>Обновление данных</h1>
             <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <input
                     type="text"
                     id="name"
                     name="name"
-                    placeholder="Enter your Name"
+                    placeholder="Введите новое имя"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
@@ -98,7 +98,7 @@ const Update = () => {
                     type="password"
                     id="password"
                     name="password"
-                    placeholder="Enter new Password"
+                    placeholder="Введите новый пароль"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
@@ -106,7 +106,7 @@ const Update = () => {
                     type="text"
                     id="tele"
                     name="tele"
-                    placeholder="Enter your Telegram"
+                    placeholder="Введите  Telegram"
                     value={tele}
                     onChange={(e) => setTele(e.target.value)}
                 />
@@ -114,7 +114,7 @@ const Update = () => {
                     type="text"
                     id="git"
                     name="git"
-                    placeholder="Enter your GitHub"
+                    placeholder="Введите GitHub"
                     value={git}
                     onChange={(e) => setGit(e.target.value)}
                 />
@@ -127,7 +127,7 @@ const Update = () => {
                         onChange={(e) => setFile(e.target.files[0])}
                     />
                 </div>
-                <button type="submit">Send</button>
+                <button type="submit">Отправить</button>
             </form>
             <button className="Back" onClick={handleRedirect}>Назад</button>
         </div>

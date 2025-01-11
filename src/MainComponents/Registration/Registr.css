@@ -1,4 +1,11 @@
+.imgVisible{
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top:54%;
+    left:70%
 
+}
 
 .form-container {
     display: flex;
@@ -74,11 +81,13 @@ input {
     transition: background-color 0.3s, color 0.3s;
     width: 100%;
     box-sizing: border-box;
+    background-image: url("https://avatars.mds.yandex.net/i?id=0c7320412c2135c756817b46512e95dba66c3ce4-13605392-images-thumbs&n=13");
 }
 .file-input-label:hover {
     background-color: #fff;
-    color: #000;
+    color: white;
     border: 2px solid #000;
+
 }
 .Back {
     position: absolute;

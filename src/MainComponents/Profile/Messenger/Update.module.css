@@ -18,7 +18,7 @@
 
 .chatWindow {
     padding: 10px;
-    height: 600px;
+    height: 100%;
     overflow-y: auto;
     background-color: #f9f9f9;
     display: flex;
@@ -26,9 +26,9 @@
     gap: 8px;
 }
 .chatWindowLight{
-    background-color: dimgrey;
+    background-color: black;
     padding: 10px;
-    height: 600px;
+    height: 750px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -56,7 +56,7 @@
 }
 .user {
     align-self: flex-end;
-    background-color: #0078d7;
+    background-color: purple;
     color: #fff;
     animation: fadeIn 0.5s ease forwards;
 }
@@ -104,8 +104,8 @@
     background-color: #005a9e;
 }
 .chatImage {
-    max-width: 100%; /* Изображение не превышает ширину родительского контейнера */
-    height: auto; /* Сохраняет пропорции изображения */
+    width: 170px; /* Изображение не превышает ширину родительского контейнера */
+    height: 200px; /* Сохраняет пропорции изображения */
     border-radius: 8px; /* Округлённые углы */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Лёгкая тень для улучшения визуального эффекта */
     margin-top: 10px; /* Отступ сверху */
@@ -128,4 +128,57 @@
     color: black;
     margin-top: 5px;
     text-align: right; /* Выровнять время по правому краю */
+}
+.screpka {
+    width: 20px;
+    height: 20px;
+    object-fit: cover; /* Ensures the image is properly scaled without distortion */
+    border-radius: 50%; /* Optional: Makes the image circular */
+}
+.file-input-container1{
+    position: relative;
+    width: 10%;
+    margin-bottom: 10px;
+}
+.file-input-container1 input[type="file"] {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+.screpka {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    object-fit: cover;
+}
+.file-input-label1 {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    background-color: transparent;
+    border-radius: 5px;
+    overflow: hidden;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer
+}
+
+.file-input-label1 img {
+    width: 10%;
+    height: 10%;
+    object-fit: cover;
 }

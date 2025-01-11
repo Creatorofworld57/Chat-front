@@ -21,9 +21,12 @@ const Messenger = () => {
     const token = localStorage.getItem('jwtToken');
     const [tittle, setTittle] = useState("Чат");
     const [chatOverView, setChatOverView] = useState(true)
-    const [fileType, setFileType] = useState('');
-    const [file, setFile] = useState(null);
     const [files, setFiles] = useState([]);
+
+
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+
 
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const {setUpdateValue, setIdUpdatedValue, chatId} = useContext(ChatCon);
@@ -43,18 +46,23 @@ const Messenger = () => {
         }
     };
 
-    function chunkFile(file, chunkSize) {
-        const chunks = [];
-        let start = 0;
+    useEffect(() => {
+        loadMessages(page);
+    }, [page]);
+    const loadMessages = async (page) => {
+        try {
+            const response = await fetch(`/api/messages?page=${page}&limit=20`);
+            const data = await response.json();
 
-        while (start < file.size) {
-            const chunk = file.slice(start, start + chunkSize);
-            chunks.push(chunk);
-            start += chunkSize;
+            if (data.length === 0) {
+                setHasMore(false);
+            } else {
+                setMessages((prev) => [...data.reverse(), ...prev]);
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки сообщений:', error);
         }
-
-        return chunks;
-    }
+    };
 
     async function sendFile(file) {
         const formData = new FormData();
@@ -74,37 +82,6 @@ const Messenger = () => {
 
 
 
-        /*   const chunks = chunkFile(file, chunkSize);
-           const totalChunks = chunks.length;
-
-           chunks.forEach((chunk, index) => {
-               const reader = new FileReader();
-
-               reader.onload = function (event) {
-                   const payload = {
-                       chunkNumber: index,
-                       data: event.target.result,
-                       name:files[0].name,// Базовый64-данные
-                       isLastChunk: index === totalChunks - 1
-                   };
-                   client.publish({
-                       destination: '/app/chat',
-                       body:JSON.stringify(payload) ,
-                       headers: {
-                           'Authentication': `Bearer ${token}`,
-                           'ChatId': chatId.toString(),
-                           'Content-Type': files[0].type || 'application/octet-stream'
-                       },
-                   });
-                   console.log(files[0].type)
-                   console.log(files[0].name)
-                   setInputMessage('');
-
-                   console.log(`Sent chunk ${index + 1}/${totalChunks}`);
-               };
-
-               reader.readAsDataURL(chunk); // Конвертируем Blob в Base64
-           });*/
         setFiles([])
     }
 
@@ -225,6 +202,31 @@ const Messenger = () => {
             sendFile(files[0])
 
         }
+        else if(client && client.connected && files.length!==0 && files.length<2  && inputMessage&& client.connected){
+            sendFile(files[0])
+            setUpdateValue(true)
+            setIdUpdatedValue(chatId)
+
+            const payload = {
+                data: inputMessage,
+                id: chatId,
+                token: token
+            };
+            console.log(JSON.stringify(payload));
+
+            client.publish({
+                destination: '/app/chat',
+                body: JSON.stringify(payload),
+                headers: {
+                    'content-type': 'application/json',
+                    'Authentication': `Bearer ${token}`,
+                    'ChatId': chatId.toString(),
+                    'Content-Type': 'text'
+                },
+            });
+
+            setInputMessage(''); // Очищаем поле ввода после отправки
+        }
     };
 
 
@@ -234,6 +236,7 @@ const Messenger = () => {
         const dat = await response.data
         setTittle(dat.name)
     }
+
 
     // Обновленный компонент чата с onKeyDown вместо onKeyPress
     return (
@@ -285,7 +288,7 @@ const Messenger = () => {
                                 type="text"
                                 value={inputMessage}
                                 onChange={(e) => setInputMessage(e.target.value)}
-                                placeholder="Type a message..."
+                                placeholder="Введите сообщение..."
                                 className={styles.messageInput}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') {
@@ -294,10 +297,10 @@ const Messenger = () => {
                                     }
                                 }}
                             />
-                            <div className="file-input-container">
-                                <label className="file-input-label" htmlFor="file">
-                                    загрузить файл
-                                </label>
+
+                            <label className="file-input-label1" htmlFor="file">
+                                <img
+                                    src={"https://avatars.mds.yandex.net/i?id=81fe73c0f89760990c5cf80119d4c8a226060f9a-4936013-images-thumbs&n=13"}/>
                                 <input
                                     type="file"
                                     id="file"
@@ -305,11 +308,15 @@ const Messenger = () => {
                                     onChange={(e) =>
                                         setFiles((prevFiles) => [...prevFiles, ...Array.from(e.target.files)])
                                     }
+                                    className={styles.input} // Use className instead of style
                                     required
                                 />
-                            </div>
+
+                            </label>
+
+
                             <button onClick={sendMessage} className={styles.sendButton}>
-                                Send
+                                Отправить
                             </button>
                         </div>
                     )}

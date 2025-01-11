@@ -3,10 +3,12 @@ import React, {useContext} from "react";
 import $api from "../../../http/middleware";
 import {useNavigate} from "react-router-dom";
 import {Theme} from "../../../HelperModuls/ThemeContext";
+import {useSelector} from "react-redux";
 
-const Settings = ({active})=>{
+const Settings = ()=>{
     const navigate = useNavigate();
     const { color, setColorTheme } = useContext(Theme);
+    const active =useSelector((state) => state.menu_red.value);
     const deleteUserAccount = async () => {
         try {
             if (window.confirm('Are you sure you want to delete your account?')) {

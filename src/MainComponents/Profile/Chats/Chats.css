@@ -50,14 +50,38 @@
     min-height: 30%;
     overflow: hidden;
     background-color: black;
+    max-height: 850px; /* Ограничение высоты для создания прокрутки */
+    overflow-y: auto; /* Включаем вертикальную прокрутку */
     color: white;
-    margin-top: 10px;
-    z-index: 10; /* Передний план для меню */
-    left:1%;
-    top:20%;
-
+    margin-top: 50px;
+    z-index: 10;
+    left: 1%;
+    top: 20%;
+    display: grid;
     padding-bottom: 120px;
+    max-width: 600px; /* Ограничиваем ширину */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-bottom: white;
 }
+
+
+
+
+/* Стиль для полосы прокрутки (опционально) */
+.menu-items::-webkit-scrollbar {
+    width: 6px;
+}
+
+.menu-items::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.5); /* Цвет полосы прокрутки */
+    border-radius: 3px;
+}
+
+.menu-items::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1); /* Цвет фона полосы */
+}
+
+
 .menu-items.light{
     background-color:lightgrey;
     color: black;
@@ -108,23 +132,7 @@
 }
 
 /* Общие стили остаются */
-.menu-items {
-    position: absolute;
-    width: 100%;
-    min-height: 30%;
-    overflow: hidden;
-    background-color: black;
-    color: white;
-    margin-top: 10px;
-    z-index: 10;
-    left: 1%;
-    top: 20%;
-    display: grid;
-    padding-bottom: 120px;
-    max-width: 600px; /* Ограничиваем ширину */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-bottom: white;
-}
+
 
 .playlist-container {
     display: grid;

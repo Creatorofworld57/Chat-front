@@ -1,15 +1,17 @@
 import React, {StrictMode} from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
+import store from "./store";
+import {Provider} from "react-redux";
 
 
 // Находим корневой элемент в HTML
 const container = document.getElementById('root');
 const root = createRoot(container);
 root.render(
-    <StrictMode>
+    <Provider store={store}>
         <App />
-    </StrictMode>
+    </Provider>
 );
 // Создаем корень и рендерим в него приложение
 //const root = createRoot(container);
